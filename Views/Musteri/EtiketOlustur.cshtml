@@ -1,0 +1,296 @@
+@model CagriMerkeziUyg.Models.MusteriEtiketi
+@{
+    ViewData["Title"] = "Yeni Etiket Oluştur";
+}
+
+<!-- Header -->
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bx bx-plus me-1"></i>Yeni Etiket Oluştur
+                </h5>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb breadcrumb-style1 mb-0">
+                        <li class="breadcrumb-item">
+                            <a href="@Url.Action("EtiketListesi")">Etiket Listesi</a>
+                        </li>
+                        <li class="breadcrumb-item active">Yeni Etiket</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Etiket Bilgileri</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="EtiketOlustur" method="post" id="etiketForm">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    
+                    <!-- Etiket Adı -->
+                    <div class="mb-3">
+                        <label asp-for="Ad" class="form-label">*</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bx bx-tag"></i></span>
+                            <input asp-for="Ad" class="form-control" placeholder="Örn: VIP Müşteri" />
+                        </div>
+                        <span asp-validation-for="Ad" class="text-danger"></span>
+                    </div>
+                    
+                    <!-- Açıklama -->
+                    <div class="mb-3">
+                        <label asp-for="Aciklama" class="form-label"></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bx bx-info-circle"></i></span>
+                            <input asp-for="Aciklama" class="form-control" placeholder="Etiket açıklaması" />
+                        </div>
+                        <span asp-validation-for="Aciklama" class="text-danger"></span>
+                    </div>
+                    
+                    <!-- Renk Kodu -->
+                    <div class="mb-3">
+                        <label asp-for="RenkKodu" class="form-label">*</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bx bx-palette"></i></span>
+                            <input asp-for="RenkKodu" class="form-control form-control-color" type="color" value="#007bff" />
+                            <input type="text" id="renkKoduText" class="form-control" placeholder="#007bff" />
+                        </div>
+                        <span asp-validation-for="RenkKodu" class="text-danger"></span>
+                        <div class="form-text">
+                            <i class="bx bx-info-circle me-1"></i>
+                            Etiketin görünümü için renk seçin.
+                        </div>
+                    </div>
+                    
+                    <!-- Aktif Durumu -->
+                    <div class="mb-4">
+                        <div class="form-check form-switch">
+                            <input asp-for="Aktif" class="form-check-input" type="checkbox" checked />
+                            <label asp-for="Aktif" class="form-check-label">
+                                Etiket aktif olsun
+                            </label>
+                        </div>
+                        <div class="form-text">
+                            <i class="bx bx-info-circle me-1"></i>
+                            Pasif etiketler müşterilere atanamaz.
+                        </div>
+                    </div>
+                    
+                    <!-- Butonlar -->
+                    <div class="d-flex justify-content-between">
+                        <a href="@Url.Action("EtiketListesi")" class="btn btn-outline-secondary">
+                            <i class="bx bx-arrow-back me-1"></i>Geri Dön
+                        </a>
+                        <div>
+                            <button type="button" class="btn btn-outline-warning me-2" onclick="formSifirla()">
+                                <i class="bx bx-refresh me-1"></i>Formu Temizle
+                            </button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bx bx-save me-1"></i>Etiket Oluştur
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Yan Panel - Önizleme -->
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="card-title mb-0">
+                    <i class="bx bx-show me-1"></i>Etiket Önizleme
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <h6 class="text-muted mb-3">Etiket Görünümü</h6>
+                    <div id="etiketOnizleme" class="d-inline-block">
+                        <span class="badge" style="background-color: #007bff; color: white; font-size: 1rem; padding: 0.5rem 1rem;">
+                            Etiket Adı
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="info-item mb-3">
+                    <small class="text-muted">Etiket Adı:</small><br>
+                    <span id="onizlemeAd">Etiket Adı</span>
+                </div>
+                
+                <div class="info-item mb-3">
+                    <small class="text-muted">Açıklama:</small><br>
+                    <span id="onizlemeAciklama">Açıklama yazılacak</span>
+                </div>
+                
+                <div class="info-item mb-3">
+                    <small class="text-muted">Renk Kodu:</small><br>
+                    <div class="d-flex align-items-center">
+                        <div id="onizlemeRenk" class="color-preview me-2" style="width: 30px; height: 30px; background-color: #007bff; border-radius: 5px;"></div>
+                        <span id="onizlemeRenkKodu">#007bff</span>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <small class="text-muted">Durum:</small><br>
+                    <span id="onizlemeDurum" class="badge bg-success">Aktif</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Renk Önerileri -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="card-title mb-0">
+                    <i class="bx bx-palette me-1"></i>Renk Önerileri
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-3">
+                        <div class="color-option" data-color="#dc3545" title="Kırmızı - Riskli/Uyarı">
+                            <div style="width: 100%; height: 30px; background-color: #dc3545; border-radius: 3px; cursor: pointer;"></div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="color-option" data-color="#28a745" title="Yeşil - Başarı/Pozitif">
+                            <div style="width: 100%; height: 30px; background-color: #28a745; border-radius: 3px; cursor: pointer;"></div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="color-option" data-color="#ffc107" title="Sarı - Dikkat/VIP">
+                            <div style="width: 100%; height: 30px; background-color: #ffc107; border-radius: 3px; cursor: pointer;"></div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="color-option" data-color="#17a2b8" title="Mavi - Bilgi/Yeni">
+                            <div style="width: 100%; height: 30px; background-color: #17a2b8; border-radius: 3px; cursor: pointer;"></div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="color-option" data-color="#6f42c1" title="Mor - Özel/Memnun">
+                            <div style="width: 100%; height: 30px; background-color: #6f42c1; border-radius: 3px; cursor: pointer;"></div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="color-option" data-color="#fd7e14" title="Turuncu - Şikayet">
+                            <div style="width: 100%; height: 30px; background-color: #fd7e14; border-radius: 3px; cursor: pointer;"></div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="color-option" data-color="#20c997" title="Teal - Kurumsal">
+                            <div style="width: 100%; height: 30px; background-color: #20c997; border-radius: 3px; cursor: pointer;"></div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="color-option" data-color="#6c757d" title="Gri - Bireysel">
+                            <div style="width: 100%; height: 30px; background-color: #6c757d; border-radius: 3px; cursor: pointer;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        // Form sıfırlama
+        function formSifirla() {
+            if (confirm('Formu temizlemek istediğinizden emin misiniz?')) {
+                document.getElementById('Ad').value = '';
+                document.getElementById('Aciklama').value = '';
+                document.getElementById('RenkKodu').value = '#007bff';
+                document.getElementById('renkKoduText').value = '#007bff';
+                document.getElementById('Aktif').checked = true;
+                onizlemeGuncelle();
+            }
+        }
+        
+        // Önizleme güncelleme
+        function onizlemeGuncelle() {
+            const ad = document.getElementById('Ad').value || 'Etiket Adı';
+            const aciklama = document.getElementById('Aciklama').value || 'Açıklama yazılacak';
+            const renk = document.getElementById('RenkKodu').value || '#007bff';
+            const aktif = document.getElementById('Aktif').checked;
+            
+            document.getElementById('onizlemeAd').textContent = ad;
+            document.getElementById('onizlemeAciklama').textContent = aciklama;
+            document.getElementById('onizlemeRenk').style.backgroundColor = renk;
+            document.getElementById('onizlemeRenkKodu').textContent = renk;
+            document.getElementById('onizlemeDurum').textContent = aktif ? 'Aktif' : 'Pasif';
+            document.getElementById('onizlemeDurum').className = aktif ? 'badge bg-success' : 'badge bg-secondary';
+            
+            // Etiket önizlemesini güncelle
+            const etiketOnizleme = document.getElementById('etiketOnizleme');
+            etiketOnizleme.innerHTML = `<span class="badge" style="background-color: ${renk}; color: white; font-size: 1rem; padding: 0.5rem 1rem;">${ad}</span>`;
+        }
+        
+        // Form alanlarında değişiklik dinle
+        ['Ad', 'Aciklama', 'RenkKodu', 'Aktif'].forEach(function(id) {
+            document.getElementById(id).addEventListener('input', onizlemeGuncelle);
+            document.getElementById(id).addEventListener('change', onizlemeGuncelle);
+        });
+        
+        // Renk kodu text input'u ile color input'u senkronize et
+        document.getElementById('renkKoduText').addEventListener('input', function(e) {
+            const colorInput = document.getElementById('RenkKodu');
+            if (e.target.value.match(/^#[0-9A-Fa-f]{6}$/)) {
+                colorInput.value = e.target.value;
+                onizlemeGuncelle();
+            }
+        });
+        
+        document.getElementById('RenkKodu').addEventListener('input', function(e) {
+            document.getElementById('renkKoduText').value = e.target.value;
+            onizlemeGuncelle();
+        });
+        
+        // Renk önerileri
+        document.querySelectorAll('.color-option').forEach(function(element) {
+            element.addEventListener('click', function() {
+                const color = this.getAttribute('data-color');
+                document.getElementById('RenkKodu').value = color;
+                document.getElementById('renkKoduText').value = color;
+                onizlemeGuncelle();
+            });
+        });
+        
+        // Form doğrulama
+        document.getElementById('etiketForm').addEventListener('submit', function(e) {
+            const ad = document.getElementById('Ad').value.trim();
+            
+            if (!ad) {
+                e.preventDefault();
+                alert('Lütfen etiket adını giriniz!');
+                return false;
+            }
+        });
+    </script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

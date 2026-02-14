@@ -1,0 +1,244 @@
+@{
+    ViewData["Title"] = "Performans Raporları";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bx bx-line-chart me-2"></i>Performans Raporları
+                </h5>
+                <div>
+                    <button class="btn btn-primary" onclick="exportToExcel()">
+                        <i class="bx bx-download me-1"></i>Excel'e Aktar
+                    </button>
+                </div>
+            </div>
+            
+            <div class="card-body">
+                <!-- Filtreler -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <label for="operatorSelect" class="form-label">Operatör Seçimi</label>
+                        <select id="operatorSelect" class="form-select">
+                            <option value="">Tüm Operatörler</option>
+                            @foreach (var op in ViewBag.Operatorler)
+                            {
+                                <option value="@op.Id">@op.TamAd</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="baslangicTarihi" class="form-label">Başlangıç Tarihi</label>
+                        <input type="date" id="baslangicTarihi" class="form-control" value="@DateTime.Today.AddDays(-30).ToString("yyyy-MM-dd")" />
+                    </div>
+                    <div class="col-md-3">
+                        <label for="bitisTarihi" class="form-label">Bitiş Tarihi</label>
+                        <input type="date" id="bitisTarihi" class="form-control" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">&nbsp;</label>
+                        <button class="btn btn-success d-block w-100" onclick="getRapor()">
+                            <i class="bx bx-search me-1"></i>Rapor Al
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Rapor Sonuçları -->
+                <div id="raporSonuclari" class="d-none">
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="card bg-primary text-white">
+                                <div class="card-body text-center">
+                                    <h4 id="toplamCagri">0</h4>
+                                    <p class="mb-0">Toplam Çağrı</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-success text-white">
+                                <div class="card-body text-center">
+                                    <h4 id="cozulenCagri">0</h4>
+                                    <p class="mb-0">Çözülen Çağrı</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-info text-white">
+                                <div class="card-body text-center">
+                                    <h4 id="cozumOrani">0%</h4>
+                                    <p class="mb-0">Çözüm Oranı</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-warning text-white">
+                                <div class="card-body text-center">
+                                    <h4 id="performansPuani">0</h4>
+                                    <p class="mb-0">Performans Puanı</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="mb-0">Çağrı Dağılımı</h6>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="cagriChart" width="400" height="200"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="mb-0">Müşteri Memnuniyet</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-center">
+                                        <div class="text-center">
+                                            <h2 id="memnuniyetPuani" class="text-success">0</h2>
+                                            <p class="mb-0">/ 5 Puan</p>
+                                            <div class="mt-2">
+                                                <span id="memnuniyetYildiz"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Yükleniyor -->
+                <div id="yukleniyor" class="text-center py-5 d-none">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                    <p class="mt-2">Rapor hazırlanıyor...</p>
+                </div>
+                
+                <!-- Başlangıç Mesajı -->
+                <div id="baslangicMesaji" class="text-center py-5">
+                    <div class="avatar avatar-xl mb-3 mx-auto">
+                        <span class="avatar-initial rounded bg-label-primary">
+                            <i class="bx bx-bar-chart bx-lg"></i>
+                        </span>
+                    </div>
+                    <h5 class="mb-1">Performans Raporları</h5>
+                    <p class="text-muted">Yukarıdaki filtrelerden operatör seçip rapor alabilirsiniz.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+let cagriChart = null;
+
+function getRapor() {
+    const operatorId = document.getElementById('operatorSelect').value;
+    const baslangic = document.getElementById('baslangicTarihi').value;
+    const bitis = document.getElementById('bitisTarihi').value;
+    
+    if (!operatorId) {
+        alert('Lütfen bir operatör seçiniz.');
+        return;
+    }
+    
+    // UI güncelle
+    document.getElementById('baslangicMesaji').classList.add('d-none');
+    document.getElementById('raporSonuclari').classList.add('d-none');
+    document.getElementById('yukleniyor').classList.remove('d-none');
+    
+    // AJAX isteği
+    fetch(`/Admin/GetOperatorPerformans?operatorId=${operatorId}&baslangic=${baslangic}&bitis=${bitis}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('yukleniyor').classList.add('d-none');
+            document.getElementById('raporSonuclari').classList.remove('d-none');
+            
+            // Kartları güncelle
+            document.getElementById('toplamCagri').textContent = data.toplamCagri;
+            document.getElementById('cozulenCagri').textContent = data.cozulenCagri;
+            document.getElementById('cozumOrani').textContent = data.cozumOrani.toFixed(1) + '%';
+            document.getElementById('performansPuani').textContent = data.genelPerformansPuani.toFixed(1);
+            
+            // Memnuniyet
+            document.getElementById('memnuniyetPuani').textContent = data.ortalamaMemnuniyet.toFixed(1);
+            document.getElementById('memnuniyetYildiz').innerHTML = getStars(data.ortalamaMemnuniyet);
+            
+            // Chart güncelle
+            updateChart(data);
+        })
+        .catch(error => {
+            console.error('Hata:', error);
+            document.getElementById('yukleniyor').classList.add('d-none');
+            document.getElementById('baslangicMesaji').classList.remove('d-none');
+            alert('Rapor alınırken hata oluştu.');
+        });
+}
+
+function updateChart(data) {
+    const ctx = document.getElementById('cagriChart').getContext('2d');
+    
+    if (cagriChart) {
+        cagriChart.destroy();
+    }
+    
+    cagriChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Çözülen', 'Bekleyen'],
+            datasets: [{
+                data: [data.cozulenCagri, data.toplamCagri - data.cozulenCagri],
+                backgroundColor: ['#28a745', '#ffc107'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+function getStars(rating) {
+    let stars = '';
+    for (let i = 1; i <= 5; i++) {
+        if (i <= rating) {
+            stars += '<i class="bx bxs-star text-warning"></i>';
+        } else {
+            stars += '<i class="bx bx-star text-muted"></i>';
+        }
+    }
+    return stars;
+}
+
+function exportToExcel() {
+    const operatorId = document.getElementById('operatorSelect').value;
+    const baslangic = document.getElementById('baslangicTarihi').value;
+    const bitis = document.getElementById('bitisTarihi').value;
+    
+    if (!operatorId) {
+        if (confirm('Operatör seçilmedi. Tüm operatörlerin raporunu almak istiyor musunuz?')) {
+            window.location.href = `/Admin/ExportPerformansRaporu?baslangic=${baslangic}&bitis=${bitis}`;
+        }
+        return;
+    }
+    
+    window.location.href = `/Admin/ExportPerformansRaporu?operatorId=${operatorId}&baslangic=${baslangic}&bitis=${bitis}`;
+}
+</script>
+}

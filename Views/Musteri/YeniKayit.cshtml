@@ -1,0 +1,247 @@
+@model CagriMerkeziUyg.Models.Musteri
+@{
+    ViewData["Title"] = "Yeni Müşteri Kayıt";
+}
+
+<!-- Header -->
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bx bx-user-plus me-1"></i>Yeni Müşteri Kayıt</h5>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb breadcrumb-style1 mb-0">
+                        <li class="breadcrumb-item">
+                            <a href="@Url.Action("Ara")">Müşteri Ara</a>
+                        </li>
+                        <li class="breadcrumb-item active">Yeni Kayıt</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Müşteri Bilgileri</h5>
+                <small class="text-muted">* Gerekli alanlar</small>
+            </div>
+            <div class="card-body">
+                <form asp-action="YeniKayit" method="post" id="musteriForm">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    
+                    <!-- Temel Bilgiler -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="TelefonNo" class="form-label">*</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bx bx-phone"></i></span>
+                                <input asp-for="TelefonNo" class="form-control" placeholder="0555 123 45 67" />
+                            </div>
+                            <span asp-validation-for="TelefonNo" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Email" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bx bx-envelope"></i></span>
+                                <input asp-for="Email" class="form-control" placeholder="ornek@email.com" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Ad" class="form-label">*</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bx bx-user"></i></span>
+                                <input asp-for="Ad" class="form-control" placeholder="Ad" />
+                            </div>
+                            <span asp-validation-for="Ad" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Soyad" class="form-label">*</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bx bx-user"></i></span>
+                                <input asp-for="Soyad" class="form-control" placeholder="Soyad" />
+                            </div>
+                            <span asp-validation-for="Soyad" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Doğum Tarihi -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="DogumTarihi" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bx bx-calendar"></i></span>
+                                <input asp-for="DogumTarihi" class="form-control" type="date" />
+                            </div>
+                            <span asp-validation-for="DogumTarihi" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-text mt-4">
+                                <small><i class="bx bx-info-circle me-1"></i>Doğum tarihi ile yaş otomatik hesaplanır</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Adres -->
+                    <div class="mb-3">
+                        <label asp-for="Adres" class="form-label"></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bx bx-map"></i></span>
+                            <textarea asp-for="Adres" class="form-control" rows="3" placeholder="Adres bilgisi..."></textarea>
+                        </div>
+                        <span asp-validation-for="Adres" class="text-danger"></span>
+                    </div>
+                    
+                    <!-- Notlar -->
+                    <div class="mb-4">
+                        <label asp-for="Notlar" class="form-label"></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bx bx-note"></i></span>
+                            <textarea asp-for="Notlar" class="form-control" rows="3" placeholder="Müşteri hakkında notlar..."></textarea>
+                        </div>
+                        <span asp-validation-for="Notlar" class="text-danger"></span>
+                    </div>
+                    
+                    <!-- Butonlar -->
+                    <div class="d-flex justify-content-between">
+                        <a href="@Url.Action("Ara")" class="btn btn-outline-secondary">
+                            <i class="bx bx-arrow-back me-1"></i>Geri Dön
+                        </a>
+                        <div>
+                            <button type="reset" class="btn btn-outline-warning me-2">
+                                <i class="bx bx-refresh me-1"></i>Temizle
+                            </button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bx bx-save me-1"></i>Müşteri Kaydet
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Yardım Paneli -->
+    <div class="col-xl-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="card-title mb-0">
+                    <i class="bx bx-help-circle me-1"></i>Kayıt Yardımı
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-primary" role="alert">
+                    <h6 class="alert-heading">Gerekli Alanlar</h6>
+                    <ul class="mb-0">
+                        <li>Telefon Numarası</li>
+                        <li>Ad</li>
+                        <li>Soyad</li>
+                    </ul>
+                </div>
+                
+                <div class="alert alert-info" role="alert">
+                    <h6 class="alert-heading">Telefon Formatı</h6>
+                    <p class="mb-0">
+                        0555 123 45 67<br>
+                        05551234567<br>
+                        +90 555 123 45 67
+                    </p>
+                </div>
+                
+                <div class="alert alert-warning" role="alert">
+                    <h6 class="alert-heading">Önemli</h6>
+                    <p class="mb-0">
+                        Aynı telefon numarası ile sadece bir müşteri kaydı yapılabilir.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Son Kayıtlar -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="card-title mb-0">
+                    <i class="bx bx-time me-1"></i>Son Kayıtlar
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-point timeline-point-primary"></div>
+                        <div class="timeline-event">
+                            <div class="timeline-header mb-1">
+                                <h6 class="mb-0">Yeni müşteri</h6>
+                                <small class="text-muted">2 dakika önce</small>
+                            </div>
+                            <p class="mb-0">Ahmet Yılmaz - 0555123456</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-point timeline-point-info"></div>
+                        <div class="timeline-event">
+                            <div class="timeline-header mb-1">
+                                <h6 class="mb-0">Güncelleme</h6>
+                                <small class="text-muted">5 dakika önce</small>
+                            </div>
+                            <p class="mb-0">Ayşe Kaya bilgileri güncellendi</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        // Form doğrulama
+        document.getElementById('musteriForm').addEventListener('submit', function(e) {
+            const telefon = document.getElementById('TelefonNo').value.trim();
+            const ad = document.getElementById('Ad').value.trim();
+            const soyad = document.getElementById('Soyad').value.trim();
+            
+            if (!telefon || !ad || !soyad) {
+                e.preventDefault();
+                alert('Lütfen gerekli alanları doldurunuz!');
+                return false;
+            }
+        });
+        
+        // Telefon numarası formatı
+        document.getElementById('TelefonNo').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 0 && value[0] === '0') {
+                if (value.length <= 11) {
+                    if (value.length > 3) {
+                        value = value.substring(0, 4) + ' ' + value.substring(4);
+                    }
+                    if (value.length > 8) {
+                        value = value.substring(0, 8) + ' ' + value.substring(8);
+                    }
+                    if (value.length > 11) {
+                        value = value.substring(0, 11) + ' ' + value.substring(11);
+                    }
+                    e.target.value = value;
+                }
+            }
+        });
+        
+        // Ad ve soyad büyük harf dönüşümü
+        ['Ad', 'Soyad'].forEach(function(id) {
+            document.getElementById(id).addEventListener('blur', function(e) {
+                if (e.target.value) {
+                    e.target.value = e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1).toLowerCase();
+                }
+            });
+        });
+    </script>
+}

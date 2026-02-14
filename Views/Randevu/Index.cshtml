@@ -1,0 +1,234 @@
+@{
+    ViewData["Title"] = "Randevu Takvimi";
+}
+
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bx bx-calendar me-2"></i>Randevu Takvimi
+                    </h5>
+                    <div>
+                        <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("Olustur")'">
+                            <i class="bx bx-plus me-1"></i>Yeni Randevu
+                        </button>
+                        <button type="button" class="btn btn-info" onclick="location.href='@Url.Action("BugunRandevular")'">
+                            <i class="bx bx-time me-1"></i>Bugünün Randevuları
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (TempData["Mesaj"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            @TempData["Mesaj"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <!-- Filtreler -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Operatör Filtrele</label>
+                            <select id="operatorFilter" class="form-select">
+                                <option value="">Tüm Operatörler</option>
+                                @foreach (var op in ViewBag.Operatorler)
+                                {
+                                    <option value="@op.Id">@op.TamAd</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-8 text-end mt-4">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-outline-primary" id="btnBugun">Bugün</button>
+                                <button type="button" class="btn btn-outline-primary" id="btnHafta">Hafta</button>
+                                <button type="button" class="btn btn-outline-primary" id="btnAy">Ay</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Takvim -->
+                    <div id="calendar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Randevu Detay Modal -->
+<div class="modal fade" id="randevuModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="randevuModalTitle">Randevu Detayları</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="randevuModalBody">
+                <p>Yükleniyor...</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                <a href="#" id="btnDetayGit" class="btn btn-primary">Detaya Git</a>
+                <a href="#" id="btnDuzenle" class="btn btn-warning">Düzenle</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- FullCalendar CSS & JS -->
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/locales/tr.global.min.js'></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var operatorFilter = document.getElementById('operatorFilter');
+            
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                locale: 'tr',
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+                },
+                buttonText: {
+                    today: 'Bugün',
+                    month: 'Ay',
+                    week: 'Hafta',
+                    day: 'Gün',
+                    list: 'Liste'
+                },
+                height: 'auto',
+                navLinks: true,
+                editable: false,
+                selectable: true,
+                selectMirror: true,
+                dayMaxEvents: true,
+                weekends: true,
+                nowIndicator: true,
+                
+                // Randevuları yükle
+                events: function(info, successCallback, failureCallback) {
+                    var operatorId = operatorFilter.value;
+                    
+                    fetch('@Url.Action("GetRandevular")?' + new URLSearchParams({
+                        start: info.startStr,
+                        end: info.endStr,
+                        operatorId: operatorId
+                    }))
+                    .then(response => response.json())
+                    .then(data => {
+                        successCallback(data);
+                    })
+                    .catch(error => {
+                        console.error('Randevular yüklenirken hata:', error);
+                        failureCallback(error);
+                    });
+                },
+
+                // Randevuya tıklandığında
+                eventClick: function(info) {
+                    showRandevuModal(info.event);
+                },
+
+                // Boş alana tıklandığında (yeni randevu)
+                select: function(info) {
+                    var startDate = info.start.toISOString().slice(0, 16);
+                    window.location.href = '@Url.Action("Olustur")?randevuZamani=' + startDate;
+                }
+            });
+
+            calendar.render();
+
+            // Operatör filtresi değiştiğinde
+            operatorFilter.addEventListener('change', function() {
+                calendar.refetchEvents();
+            });
+
+            // Kısayol butonları
+            document.getElementById('btnBugun').addEventListener('click', function() {
+                calendar.today();
+            });
+
+            document.getElementById('btnHafta').addEventListener('click', function() {
+                calendar.changeView('timeGridWeek');
+            });
+
+            document.getElementById('btnAy').addEventListener('click', function() {
+                calendar.changeView('dayGridMonth');
+            });
+
+            // Randevu modal göster
+            function showRandevuModal(event) {
+                var modal = new bootstrap.Modal(document.getElementById('randevuModal'));
+                
+                document.getElementById('randevuModalTitle').textContent = event.title;
+                
+                var bodyHtml = '<div class="row">';
+                bodyHtml += '<div class="col-md-6"><strong>Başlangıç:</strong></div>';
+                bodyHtml += '<div class="col-md-6">' + formatDate(event.start) + '</div>';
+                
+                if (event.end) {
+                    bodyHtml += '<div class="col-md-6"><strong>Bitiş:</strong></div>';
+                    bodyHtml += '<div class="col-md-6">' + formatDate(event.end) + '</div>';
+                }
+                
+                bodyHtml += '<div class="col-md-6"><strong>Operatör:</strong></div>';
+                bodyHtml += '<div class="col-md-6">' + (event.extendedProps.operatorAdi || '-') + '</div>';
+                
+                if (event.extendedProps.musteriAdi) {
+                    bodyHtml += '<div class="col-md-6"><strong>Müşteri:</strong></div>';
+                    bodyHtml += '<div class="col-md-6">' + event.extendedProps.musteriAdi + '</div>';
+                }
+                
+                bodyHtml += '<div class="col-md-6"><strong>Tip:</strong></div>';
+                bodyHtml += '<div class="col-md-6"><span class="badge bg-info">' + event.extendedProps.tip + '</span></div>';
+                
+                bodyHtml += '<div class="col-md-6"><strong>Durum:</strong></div>';
+                bodyHtml += '<div class="col-md-6"><span class="badge bg-primary">' + event.extendedProps.durum + '</span></div>';
+                
+                bodyHtml += '<div class="col-md-6"><strong>Öncelik:</strong></div>';
+                bodyHtml += '<div class="col-md-6"><span class="badge bg-warning">' + event.extendedProps.oncelik + '</span></div>';
+                
+                if (event.extendedProps.description) {
+                    bodyHtml += '<div class="col-12 mt-3"><strong>Açıklama:</strong></div>';
+                    bodyHtml += '<div class="col-12">' + event.extendedProps.description + '</div>';
+                }
+                
+                bodyHtml += '</div>';
+                
+                document.getElementById('randevuModalBody').innerHTML = bodyHtml;
+                document.getElementById('btnDetayGit').href = '@Url.Action("Detay")/' + event.id;
+                document.getElementById('btnDuzenle').href = '@Url.Action("Duzenle")/' + event.id;
+                
+                modal.show();
+            }
+
+            function formatDate(date) {
+                if (!date) return '-';
+                var d = new Date(date);
+                return d.toLocaleDateString('tr-TR') + ' ' + d.toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'});
+            }
+        });
+    </script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,405 @@
+@model CagriMerkeziUyg.Models.Musteri
+@{
+    ViewData["Title"] = "Müşteri Düzenle";
+}
+
+<!-- Header -->
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bx bx-edit me-1"></i>Müşteri Düzenle - @Model.TamAd
+                </h5>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb breadcrumb-style1 mb-0">
+                        <li class="breadcrumb-item">
+                            <a href="@Url.Action("Ara")">Müşteri Ara</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="@Url.Action("Detay", new { id = Model.Id })">@Model.TamAd</a>
+                        </li>
+                        <li class="breadcrumb-item active">Düzenle</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Müşteri Bilgilerini Düzenle</h5>
+                <small class="text-muted">* Gerekli alanlar</small>
+            </div>
+            <div class="card-body">
+                <form asp-action="Duzenle" method="post" id="musteriForm">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="KayitTarihi" />
+                    
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    
+                    <!-- Temel Bilgiler -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="TelefonNo" class="form-label">*</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bx bx-phone"></i></span>
+                                <input asp-for="TelefonNo" class="form-control" placeholder="0555 123 45 67" />
+                            </div>
+                            <span asp-validation-for="TelefonNo" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Email" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bx bx-envelope"></i></span>
+                                <input asp-for="Email" class="form-control" placeholder="ornek@email.com" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Ad" class="form-label">*</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bx bx-user"></i></span>
+                                <input asp-for="Ad" class="form-control" placeholder="Ad" />
+                            </div>
+                            <span asp-validation-for="Ad" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Soyad" class="form-label">*</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bx bx-user"></i></span>
+                                <input asp-for="Soyad" class="form-control" placeholder="Soyad" />
+                            </div>
+                            <span asp-validation-for="Soyad" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Doğum Tarihi -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="DogumTarihi" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bx bx-calendar"></i></span>
+                                <input asp-for="DogumTarihi" class="form-control" type="date" />
+                            </div>
+                            <span asp-validation-for="DogumTarihi" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-text mt-4">
+                                <small>
+                                    <i class="bx bx-info-circle me-1"></i>
+                                    Mevcut yaş: @(Model.Yas?.ToString() ?? "Belirtilmemiş")
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Adres -->
+                    <div class="mb-3">
+                        <label asp-for="Adres" class="form-label"></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bx bx-map"></i></span>
+                            <textarea asp-for="Adres" class="form-control" rows="3" placeholder="Adres bilgisi..."></textarea>
+                        </div>
+                        <span asp-validation-for="Adres" class="text-danger"></span>
+                    </div>
+                    
+                    <!-- Müşteri Tipi -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="MusteriTipi" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bx bx-category"></i></span>
+                                <select asp-for="MusteriTipi" class="form-select">
+                                    <option value="">Müşteri tipi seçiniz</option>
+                                    <option value="@CagriMerkeziUyg.Models.MusteriTipi.VIP">VIP Müşteri</option>
+                                    <option value="@CagriMerkeziUyg.Models.MusteriTipi.Düzenli">Düzenli Müşteri</option>
+                                    <option value="@CagriMerkeziUyg.Models.MusteriTipi.Yeni">Yeni Müşteri</option>
+                                    <option value="@CagriMerkeziUyg.Models.MusteriTipi.Potansiyel">Potansiyel Müşteri</option>
+                                    <option value="@CagriMerkeziUyg.Models.MusteriTipi.Riskli">Riskli Müşteri</option>
+                                    <option value="@CagriMerkeziUyg.Models.MusteriTipi.Sikayetci">Şikayetçi Müşteri</option>
+                                    <option value="@CagriMerkeziUyg.Models.MusteriTipi.Memnun">Memnun Müşteri</option>
+                                    <option value="@CagriMerkeziUyg.Models.MusteriTipi.Kurumsal">Kurumsal Müşteri</option>
+                                    <option value="@CagriMerkeziUyg.Models.MusteriTipi.Bireysel">Bireysel Müşteri</option>
+                                    <option value="@CagriMerkeziUyg.Models.MusteriTipi.OzelDurum">Özel Durum</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="MusteriTipi" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!-- Notlar -->
+                    <div class="mb-3">
+                        <label asp-for="Notlar" class="form-label"></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bx bx-note"></i></span>
+                            <textarea asp-for="Notlar" class="form-control" rows="3" placeholder="Müşteri hakkında notlar..."></textarea>
+                        </div>
+                        <span asp-validation-for="Notlar" class="text-danger"></span>
+                    </div>
+
+                    <!-- Özel Notlar -->
+                    <div class="mb-4">
+                        <label asp-for="OzelNotlar" class="form-label"></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bx bx-star"></i></span>
+                            <textarea asp-for="OzelNotlar" class="form-control" rows="3" placeholder="Özel notlar ve uyarılar..."></textarea>
+                        </div>
+                        <span asp-validation-for="OzelNotlar" class="text-danger"></span>
+                        <div class="form-text">
+                            <i class="bx bx-info-circle me-1"></i>
+                            Bu alan operatörler için özel uyarılar ve notlar içerir.
+                        </div>
+                    </div>
+                    
+                    <!-- Kayıt Bilgileri -->
+                    <div class="alert alert-info">
+                        <h6 class="alert-heading">
+                            <i class="bx bx-info-circle me-1"></i>Kayıt Bilgileri
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Müşteri ID:</strong> @Model.Id<br>
+                                <strong>Kayıt Tarihi:</strong> @Model.KayitTarihi.ToString("dd MMMM yyyy HH:mm", new System.Globalization.CultureInfo("tr-TR"))
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Son Güncelleme:</strong> @Model.SonGuncelleme.ToString("dd MMMM yyyy HH:mm", new System.Globalization.CultureInfo("tr-TR"))
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Butonlar -->
+                    <div class="d-flex justify-content-between">
+                        <a href="@Url.Action("Detay", new { id = Model.Id })" class="btn btn-outline-secondary">
+                            <i class="bx bx-arrow-back me-1"></i>Geri Dön
+                        </a>
+                        <div>
+                            <button type="button" class="btn btn-outline-warning me-2" onclick="formSifirla()">
+                                <i class="bx bx-refresh me-1"></i>Değişiklikleri Geri Al
+                            </button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bx bx-save me-1"></i>Değişiklikleri Kaydet
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Yan Panel -->
+    <div class="col-xl-4">
+        <!-- Önizleme -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="card-title mb-0">
+                    <i class="bx bx-show me-1"></i>Önizleme
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="avatar avatar-lg me-3">
+                        <span class="avatar-initial rounded-circle bg-label-primary">
+                            <span id="onizlemeHarf">@Model.Ad.Substring(0, 1).ToUpper()</span>
+                        </span>
+                    </div>
+                    <div>
+                        <h6 class="mb-0" id="onizlemeAd">@Model.TamAd</h6>
+                        <small class="text-muted" id="onizlemeTelefon">@Model.TelefonNo</small>
+                    </div>
+                </div>
+                
+                <div class="info-item mb-2">
+                    <small class="text-muted">E-posta:</small><br>
+                    <span id="onizlemeEmail">@(string.IsNullOrEmpty(Model.Email) ? "Belirtilmemiş" : Model.Email)</span>
+                </div>
+                
+                <div class="info-item mb-2">
+                    <small class="text-muted">Yaş:</small><br>
+                    <span id="onizlemeYas">@(Model.Yas?.ToString() ?? "Belirtilmemiş")</span>
+                </div>
+                
+                @if (!string.IsNullOrEmpty(Model.Adres))
+                {
+                    <div class="info-item mb-2">
+                        <small class="text-muted">Adres:</small><br>
+                        <span id="onizlemeAdres">@Model.Adres</span>
+                    </div>
+                }
+            </div>
+        </div>
+        
+        <!-- Değişiklik Geçmişi -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="card-title mb-0">
+                    <i class="bx bx-history me-1"></i>Değişiklik Geçmişi
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-point timeline-point-warning"></div>
+                        <div class="timeline-event">
+                            <div class="timeline-header mb-1">
+                                <h6 class="mb-0">Düzenleme Başlatıldı</h6>
+                                <small class="text-muted">Az önce</small>
+                            </div>
+                            <p class="mb-0">Müşteri bilgileri düzenlemeye açıldı.</p>
+                        </div>
+                    </div>
+                    
+                    @if (Model.SonGuncelleme != Model.KayitTarihi)
+                    {
+                        <div class="timeline-item">
+                            <div class="timeline-point timeline-point-info"></div>
+                            <div class="timeline-event">
+                                <div class="timeline-header mb-1">
+                                    <h6 class="mb-0">Son Güncelleme</h6>
+                                    <small class="text-muted">@Model.SonGuncelleme.ToString("dd MMM HH:mm")</small>
+                                </div>
+                                <p class="mb-0">Müşteri bilgileri güncellendi.</p>
+                            </div>
+                        </div>
+                    }
+                    
+                    <div class="timeline-item">
+                        <div class="timeline-point timeline-point-success"></div>
+                        <div class="timeline-event">
+                            <div class="timeline-header mb-1">
+                                <h6 class="mb-0">Kayıt Oluşturuldu</h6>
+                                <small class="text-muted">@Model.KayitTarihi.ToString("dd MMM yyyy")</small>
+                            </div>
+                            <p class="mb-0">Müşteri kaydı oluşturuldu.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Hızlı İşlemler -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="card-title mb-0">
+                    <i class="bx bx-zap me-1"></i>Hızlı İşlemler
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="tel:@Model.TelefonNo" class="btn btn-outline-success btn-sm">
+                        <i class="bx bx-phone me-2"></i>@Model.TelefonNo'yı Ara
+                    </a>
+                    
+                    @if (!string.IsNullOrEmpty(Model.Email))
+                    {
+                        <a href="mailto:@Model.Email" class="btn btn-outline-info btn-sm">
+                            <i class="bx bx-envelope me-2"></i>E-posta Gönder
+                        </a>
+                    }
+                    
+                    <a href="@Url.Action("Detay", new { id = Model.Id })" class="btn btn-outline-primary btn-sm">
+                        <i class="bx bx-show me-2"></i>Detayları Görüntüle
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        // Orijinal değerleri sakla
+        const orijinalDegerler = {
+            telefon: '@Model.TelefonNo',
+            email: '@Model.Email',
+            ad: '@Model.Ad',
+            soyad: '@Model.Soyad',
+            dogumTarihi: '@(Model.DogumTarihi?.ToString("yyyy-MM-dd") ?? "")',
+            adres: '@Model.Adres',
+            notlar: '@Model.Notlar'
+        };
+        
+        // Form sıfırlama
+        function formSifirla() {
+            if (confirm('Tüm değişiklikler geri alınacak. Emin misiniz?')) {
+                document.getElementById('TelefonNo').value = orijinalDegerler.telefon;
+                document.getElementById('Email').value = orijinalDegerler.email;
+                document.getElementById('Ad').value = orijinalDegerler.ad;
+                document.getElementById('Soyad').value = orijinalDegerler.soyad;
+                document.getElementById('DogumTarihi').value = orijinalDegerler.dogumTarihi;
+                document.getElementById('Adres').value = orijinalDegerler.adres;
+                document.getElementById('Notlar').value = orijinalDegerler.notlar;
+                
+                onizlemeGuncelle();
+            }
+        }
+        
+        // Önizleme güncelleme
+        function onizlemeGuncelle() {
+            const ad = document.getElementById('Ad').value || 'Ad';
+            const soyad = document.getElementById('Soyad').value || 'Soyad';
+            const telefon = document.getElementById('TelefonNo').value || 'Telefon';
+            const email = document.getElementById('Email').value || '';
+            
+            document.getElementById('onizlemeHarf').textContent = ad.charAt(0).toUpperCase();
+            document.getElementById('onizlemeAd').textContent = ad + ' ' + soyad;
+            document.getElementById('onizlemeTelefon').textContent = telefon;
+            document.getElementById('onizlemeEmail').textContent = email || 'Belirtilmemiş';
+        }
+        
+        // Form alanlarında değişiklik dinle
+        ['Ad', 'Soyad', 'TelefonNo', 'Email'].forEach(function(id) {
+            document.getElementById(id).addEventListener('input', onizlemeGuncelle);
+        });
+        
+        // Telefon numarası formatı
+        document.getElementById('TelefonNo').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 0 && value[0] === '0') {
+                if (value.length <= 11) {
+                    if (value.length > 3) {
+                        value = value.substring(0, 4) + ' ' + value.substring(4);
+                    }
+                    if (value.length > 8) {
+                        value = value.substring(0, 8) + ' ' + value.substring(8);
+                    }
+                    if (value.length > 11) {
+                        value = value.substring(0, 11) + ' ' + value.substring(11);
+                    }
+                    e.target.value = value;
+                }
+            }
+        });
+        
+        // Ad ve soyad büyük harf dönüşümü
+        ['Ad', 'Soyad'].forEach(function(id) {
+            document.getElementById(id).addEventListener('blur', function(e) {
+                if (e.target.value) {
+                    e.target.value = e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1).toLowerCase();
+                    onizlemeGuncelle();
+                }
+            });
+        });
+        
+        // Form doğrulama
+        document.getElementById('musteriForm').addEventListener('submit', function(e) {
+            const telefon = document.getElementById('TelefonNo').value.trim();
+            const ad = document.getElementById('Ad').value.trim();
+            const soyad = document.getElementById('Soyad').value.trim();
+            
+            if (!telefon || !ad || !soyad) {
+                e.preventDefault();
+                alert('Lütfen gerekli alanları doldurunuz!');
+                return false;
+            }
+        });
+    </script>
+}

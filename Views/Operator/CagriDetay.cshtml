@@ -1,0 +1,311 @@
+@model CagriMerkeziUyg.Models.MusteriAktiviteler
+@{
+    ViewData["Title"] = "Çağrı Detayı";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">📞 Çağrı Detayı #@Model.Id</h3>
+                    <div>
+                        <a href="@Url.Action("CagriListesi", "Operator")" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Listeye Dön
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Sol Kolon: Müşteri Bilgileri -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">👤 Müşteri Bilgileri</h5>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td><strong>Ad Soyad:</strong></td>
+                                            <td>@Model.Musteri.TamAd</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Telefon:</strong></td>
+                                            <td>
+                                                <a href="tel:@Model.Musteri.TelefonNo">@Model.Musteri.TelefonNo</a>
+                                            </td>
+                                        </tr>
+                                        @if (!string.IsNullOrEmpty(Model.Musteri.Email))
+                                        {
+                                            <tr>
+                                                <td><strong>E-posta:</strong></td>
+                                                <td>
+                                                    <a href="mailto:@Model.Musteri.Email">@Model.Musteri.Email</a>
+                                                </td>
+                                            </tr>
+                                        }
+                                        @if (!string.IsNullOrEmpty(Model.Musteri.Adres))
+                                        {
+                                            <tr>
+                                                <td><strong>Adres:</strong></td>
+                                                <td>@Model.Musteri.Adres</td>
+                                            </tr>
+                                        }
+                                        <tr>
+                                            <td><strong>Kayıt Tarihi:</strong></td>
+                                            <td>@Model.Musteri.KayitTarihi.ToString("dd.MM.yyyy")</td>
+                                        </tr>
+                                        
+                                        <!-- Müşteri Tipi -->
+                                        @if (Model.Musteri.MusteriTipi.HasValue)
+                                        {
+                                            <tr>
+                                                <td><strong>Müşteri Tipi:</strong></td>
+                                                <td>
+                                                    <span class="badge bg-primary">@Model.Musteri.MusteriTipi.Value</span>
+                                                </td>
+                                            </tr>
+                                        }
+                                        
+                                        <!-- Etiketler -->
+                                        @if (Model.Musteri.EtiketAtamalari != null && Model.Musteri.EtiketAtamalari.Any())
+                                        {
+                                            <tr>
+                                                <td><strong>Etiketler:</strong></td>
+                                                <td>
+                                                    <div class="d-flex flex-wrap gap-1">
+                                                        @foreach (var etiket in Model.Musteri.EtiketAtamalari)
+                                                        {
+                                                            <span class="badge" style="background-color: @etiket.MusteriEtiketi.RenkKodu; color: white;">
+                                                                @etiket.MusteriEtiketi.Ad
+                                                            </span>
+                                                        }
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                        
+                                        <!-- Özel Notlar -->
+                                        @if (!string.IsNullOrEmpty(Model.Musteri.OzelNotlar))
+                                        {
+                                            <tr>
+                                                <td><strong>Özel Notlar:</strong></td>
+                                                <td>
+                                                    <div class="alert alert-warning py-2 mb-0">
+                                                        <i class="bx bx-star me-1"></i>
+                                                        @Model.Musteri.OzelNotlar
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sağ Kolon: Çağrı Bilgileri -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">📋 Çağrı Bilgileri</h5>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td><strong>Aktivite Türü:</strong></td>
+                                            <td>
+                                                @{
+                                                    var turRenk = Model.Tur.ToString() switch {
+                                                        "Sikayet" => "danger",
+                                                        "Talep" => "primary",
+                                                        "Bilgi" => "info",
+                                                        "Oneri" => "success",
+                                                        _ => "secondary"
+                                                    };
+                                                }
+                                                <span class="badge bg-@turRenk">@Model.Tur</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Konu:</strong></td>
+                                            <td>@Model.Konu</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Durum:</strong></td>
+                                            <td>
+                                                @{
+                                                    var durumRenk = Model.Durum.ToString() switch {
+                                                        "Cozumlendi" => "success",
+                                                        "Islemde" => "primary",
+                                                        "Beklemede" => "warning",
+                                                        "IptalEdildi" => "danger",
+                                                        _ => "secondary"
+                                                    };
+                                                }
+                                                <span class="badge bg-@durumRenk">@Model.Durum</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Öncelik:</strong></td>
+                                            <td>
+                                                @{
+                                                    var oncelikRenk = Model.Oncelik.ToString() switch {
+                                                        "Acil" => "danger",
+                                                        "Yuksek" => "warning",
+                                                        "Normal" => "primary",
+                                                        _ => "secondary"
+                                                    };
+                                                }
+                                                <span class="badge bg-@oncelikRenk">@Model.Oncelik</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Oluşturulma:</strong></td>
+                                            <td>@Model.OlusturulmaTarihi.ToString("dd.MM.yyyy HH:mm")</td>
+                                        </tr>
+                                        @if (Model.CozumTarihi.HasValue)
+                                        {
+                                            <tr>
+                                                <td><strong>Çözüm Tarihi:</strong></td>
+                                                <td>@Model.CozumTarihi.Value.ToString("dd.MM.yyyy HH:mm")</td>
+                                            </tr>
+                                        }
+                                        @if (Model.CagriSuresi.HasValue)
+                                        {
+                                            <tr>
+                                                <td><strong>Çağrı Süresi:</strong></td>
+                                                <td>@Model.CagriSuresi.Value dk</td>
+                                            </tr>
+                                        }
+                                        @if (Model.MusteriMemnuniyet.HasValue)
+                                        {
+                                            <tr>
+                                                <td><strong>Memnuniyet:</strong></td>
+                                                <td>
+                                                    @{
+                                                        var memnuniyetRenk = Model.MusteriMemnuniyet >= 4 ? "success" : (Model.MusteriMemnuniyet >= 3 ? "warning" : "danger");
+                                                    }
+                                                    <span class="badge bg-@memnuniyetRenk">@Model.MusteriMemnuniyet/5</span>
+                                                    @for (int i = 1; i <= 5; i++)
+                                                    {
+                                                        if (i <= Model.MusteriMemnuniyet)
+                                                        {
+                                                            <i class="fas fa-star text-warning"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="far fa-star text-muted"></i>
+                                                        }
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Açıklama -->
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">📝 Açıklama</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p class="mb-0">@Model.Aciklama</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Çağrı Güncelleme Formu (Sadece açık çağrılar için) -->
+                    @if (Model.Durum != CagriMerkeziUyg.Models.AktiviteDurumu.Cozumlendi && 
+                         Model.Durum != CagriMerkeziUyg.Models.AktiviteDurumu.IptalEdildi)
+                    {
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title">🔄 Çağrı Güncelleme</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <form asp-action="CagriGuncelle" method="post">
+                                            <input type="hidden" name="id" value="@Model.Id" />
+                                            
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <div class="mb-3">
+                                                        <label for="durum" class="form-label">Durum</label>
+                                                        <select class="form-select" name="durum" required>
+                                                            <option value="1" selected="@(Model.Durum == CagriMerkeziUyg.Models.AktiviteDurumu.Islemde)">İşlemde</option>
+                                                            <option value="2" selected="@(Model.Durum == CagriMerkeziUyg.Models.AktiviteDurumu.Beklemede)">Beklemede</option>
+                                                            <option value="3" selected="@(Model.Durum == CagriMerkeziUyg.Models.AktiviteDurumu.Cozumlendi)">Çözümlendi</option>
+                                                            <option value="4" selected="@(Model.Durum == CagriMerkeziUyg.Models.AktiviteDurumu.IptalEdildi)">İptal Et</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="mb-3">
+                                                        <label for="cagriSuresi" class="form-label">Çağrı Süresi (dk)</label>
+                                                        <input type="number" class="form-control" name="cagriSuresi" 
+                                                               value="@Model.CagriSuresi" min="0" step="0.1">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="mb-3">
+                                                        <label for="memnuniyet" class="form-label">Müşteri Memnuniyeti</label>
+                                                        <select class="form-select" name="memnuniyet">
+                                                            <option value="">Seçiniz...</option>
+                                                            <option value="1" selected="@(Model.MusteriMemnuniyet == 1)">1 - Çok Kötü</option>
+                                                            <option value="2" selected="@(Model.MusteriMemnuniyet == 2)">2 - Kötü</option>
+                                                            <option value="3" selected="@(Model.MusteriMemnuniyet == 3)">3 - Orta</option>
+                                                            <option value="4" selected="@(Model.MusteriMemnuniyet == 4)">4 - İyi</option>
+                                                            <option value="5" selected="@(Model.MusteriMemnuniyet == 5)">5 - Mükemmel</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 d-flex align-items-end">
+                                                    <button type="submit" class="btn btn-success w-100">
+                                                        <i class="fas fa-save"></i> Güncelle
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="mb-3">
+                                                        <label for="aciklama" class="form-label">Ek Açıklama</label>
+                                                        <textarea class="form-control" name="aciklama" rows="3" 
+                                                                  placeholder="Güncelleme ile ilgili açıklama..."></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

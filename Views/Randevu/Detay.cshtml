@@ -1,0 +1,395 @@
+@model CagriMerkeziUyg.Models.Randevu
+
+@{
+    ViewData["Title"] = "Randevu Detayı";
+}
+
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bx bx-calendar-event me-2"></i>Randevu Detayı
+                    </h5>
+                    <div>
+                        <a href="@Url.Action("Duzenle", new { id = Model.Id })" class="btn btn-sm btn-warning">
+                            <i class="bx bx-edit me-1"></i>Düzenle
+                        </a>
+                        <a href="@Url.Action("Index")" class="btn btn-sm btn-secondary">
+                            <i class="bx bx-arrow-back me-1"></i>Geri
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Sol Kolon -->
+                        <div class="col-md-6">
+                            <div class="card bg-light mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="bx bx-info-circle me-2"></i>Genel Bilgiler
+                                    </h5>
+                                    <hr>
+                                    
+                                    <div class="row mb-2">
+                                        <div class="col-5"><strong>Başlık:</strong></div>
+                                        <div class="col-7">@Model.Baslik</div>
+                                    </div>
+
+                                    <div class="row mb-2">
+                                        <div class="col-5"><strong>Tip:</strong></div>
+                                        <div class="col-7">
+                                            <span class="badge bg-info">@Model.Tip.ToString()</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-2">
+                                        <div class="col-5"><strong>Durum:</strong></div>
+                                        <div class="col-7">
+                                            @{
+                                                var durumClass = Model.Durum switch
+                                                {
+                                                    CagriMerkeziUyg.Models.RandevuDurumu.Bekliyor => "bg-warning",
+                                                    CagriMerkeziUyg.Models.RandevuDurumu.DevamEdiyor => "bg-primary",
+                                                    CagriMerkeziUyg.Models.RandevuDurumu.Tamamlandi => "bg-success",
+                                                    CagriMerkeziUyg.Models.RandevuDurumu.Iptal => "bg-danger",
+                                                    CagriMerkeziUyg.Models.RandevuDurumu.Ertelendi => "bg-secondary",
+                                                    _ => "bg-secondary"
+                                                };
+                                            }
+                                            <span class="badge @durumClass">@Model.Durum.ToString()</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-2">
+                                        <div class="col-5"><strong>Öncelik:</strong></div>
+                                        <div class="col-7">
+                                            @{
+                                                var oncelikClass = Model.Oncelik switch
+                                                {
+                                                    CagriMerkeziUyg.Models.RandevuOncelik.Dusuk => "bg-info",
+                                                    CagriMerkeziUyg.Models.RandevuOncelik.Normal => "bg-success",
+                                                    CagriMerkeziUyg.Models.RandevuOncelik.Yuksek => "bg-warning",
+                                                    CagriMerkeziUyg.Models.RandevuOncelik.Acil => "bg-danger",
+                                                    _ => "bg-secondary"
+                                                };
+                                            }
+                                            <span class="badge @oncelikClass">@Model.Oncelik.ToString()</span>
+                                        </div>
+                                    </div>
+
+                                    @if (!string.IsNullOrEmpty(Model.Aciklama))
+                                    {
+                                        <div class="row mb-2">
+                                            <div class="col-12"><strong>Açıklama:</strong></div>
+                                            <div class="col-12 mt-1">
+                                                <div class="alert alert-secondary mb-0">
+                                                    @Model.Aciklama
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="bx bx-time me-2"></i>Zaman Bilgileri
+                                    </h5>
+                                    <hr>
+                                    
+                                    <div class="row mb-2">
+                                        <div class="col-5"><strong>Randevu Zamanı:</strong></div>
+                                        <div class="col-7">
+                                            <i class="bx bx-calendar text-primary me-1"></i>
+                                            @Model.RandevuZamani.ToString("dd.MM.yyyy HH:mm")
+                                        </div>
+                                    </div>
+
+                                    @if (Model.BitisZamani.HasValue)
+                                    {
+                                        <div class="row mb-2">
+                                            <div class="col-5"><strong>Bitiş Zamanı:</strong></div>
+                                            <div class="col-7">
+                                                <i class="bx bx-calendar-check text-success me-1"></i>
+                                                @Model.BitisZamani.Value.ToString("dd.MM.yyyy HH:mm")
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-2">
+                                            <div class="col-5"><strong>Süre:</strong></div>
+                                            <div class="col-7">
+                                                <span class="badge bg-primary">@Model.Sure dk</span>
+                                            </div>
+                                        </div>
+                                    }
+
+                                    <div class="row mb-2">
+                                        <div class="col-5"><strong>Oluşturulma:</strong></div>
+                                        <div class="col-7">@Model.OlusturulmaTarihi.ToString("dd.MM.yyyy HH:mm")</div>
+                                    </div>
+
+                                    <div class="row mb-2">
+                                        <div class="col-5"><strong>Son Güncelleme:</strong></div>
+                                        <div class="col-7">@Model.SonGuncelleme.ToString("dd.MM.yyyy HH:mm")</div>
+                                    </div>
+
+                                    @if (Model.TamamlanmaTarihi.HasValue)
+                                    {
+                                        <div class="row mb-2">
+                                            <div class="col-5"><strong>Tamamlanma:</strong></div>
+                                            <div class="col-7 text-success">
+                                                <i class="bx bx-check-circle me-1"></i>
+                                                @Model.TamamlanmaTarihi.Value.ToString("dd.MM.yyyy HH:mm")
+                                            </div>
+                                        </div>
+                                    }
+
+                                    <!-- Durum İkonları -->
+                                    <div class="mt-3">
+                                        @if (Model.Bugun)
+                                        {
+                                            <span class="badge bg-info me-1">
+                                                <i class="bx bx-calendar-star"></i> Bugün
+                                            </span>
+                                        }
+                                        @if (Model.Yaklasıyor)
+                                        {
+                                            <span class="badge bg-warning me-1">
+                                                <i class="bx bx-time-five"></i> Yaklaşıyor
+                                            </span>
+                                        }
+                                        @if (Model.Gecti && Model.Durum == CagriMerkeziUyg.Models.RandevuDurumu.Bekliyor)
+                                        {
+                                            <span class="badge bg-danger me-1">
+                                                <i class="bx bx-error"></i> Geçti
+                                            </span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sağ Kolon -->
+                        <div class="col-md-6">
+                            <div class="card bg-light mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="bx bx-user me-2"></i>Kişiler
+                                    </h5>
+                                    <hr>
+                                    
+                                    <div class="row mb-3">
+                                        <div class="col-5"><strong>Atanan Operatör:</strong></div>
+                                        <div class="col-7">
+                                            @if (Model.Operator != null)
+                                            {
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar avatar-sm me-2">
+                                                        <span class="avatar-initial rounded-circle bg-label-primary">
+                                                            @Model.Operator.Ad.Substring(0, 1)@Model.Operator.Soyad.Substring(0, 1)
+                                                        </span>
+                                                    </div>
+                                                    <div>
+                                                        <strong>@Model.Operator.TamAd</strong><br>
+                                                        <small class="text-muted">@Model.Operator.Email</small>
+                                                    </div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">Belirtilmemiş</span>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    @if (Model.Musteri != null)
+                                    {
+                                        <div class="row mb-3">
+                                            <div class="col-5"><strong>Müşteri:</strong></div>
+                                            <div class="col-7">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar avatar-sm me-2">
+                                                        <span class="avatar-initial rounded-circle bg-label-success">
+                                                            @Model.Musteri.Ad.Substring(0, 1)@Model.Musteri.Soyad.Substring(0, 1)
+                                                        </span>
+                                                    </div>
+                                                    <div>
+                                                        <strong>@Model.Musteri.TamAd</strong><br>
+                                                        <small class="text-muted">@Model.Musteri.TelefonNo</small>
+                                                    </div>
+                                                </div>
+                                                <a href="@Url.Action("Detay", "Musteri", new { id = Model.MusteriId })" class="btn btn-sm btn-outline-primary mt-2">
+                                                    <i class="bx bx-user me-1"></i>Müşteri Detayı
+                                                </a>
+                                            </div>
+                                        </div>
+                                    }
+
+                                    @if (Model.OlusturanOperator != null)
+                                    {
+                                        <div class="row">
+                                            <div class="col-5"><strong>Oluşturan:</strong></div>
+                                            <div class="col-7">
+                                                <small>@Model.OlusturanOperator.TamAd</small>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="card bg-light mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="bx bx-bell me-2"></i>Hatırlatma
+                                    </h5>
+                                    <hr>
+                                    
+                                    <div class="row mb-2">
+                                        <div class="col-6"><strong>Hatırlatma Aktif:</strong></div>
+                                        <div class="col-6">
+                                            @if (Model.HatirlatmaAktif)
+                                            {
+                                                <span class="badge bg-success">
+                                                    <i class="bx bx-check"></i> Aktif
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">
+                                                    <i class="bx bx-x"></i> Pasif
+                                                </span>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-2">
+                                        <div class="col-6"><strong>Hatırlatma Süresi:</strong></div>
+                                        <div class="col-6">@Model.HatirlatmaSuresi dakika önce</div>
+                                    </div>
+
+                                    <div class="row mb-2">
+                                        <div class="col-6"><strong>Gönderildi mi:</strong></div>
+                                        <div class="col-6">
+                                            @if (Model.HatirlatmaGonderildi)
+                                            {
+                                                <span class="text-success">
+                                                    <i class="bx bx-check-circle"></i> Evet
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">
+                                                    <i class="bx bx-x-circle"></i> Hayır
+                                                </span>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(Model.TamamlanmaNotu))
+                            {
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <i class="bx bx-note me-2"></i>Tamamlanma Notu
+                                        </h5>
+                                        <hr>
+                                        <div class="alert alert-success mb-0">
+                                            @Model.TamamlanmaNotu
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Aksiyon Butonları -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="btn-group" role="group">
+                                @if (Model.Durum == CagriMerkeziUyg.Models.RandevuDurumu.Bekliyor)
+                                {
+                                    <button type="button" class="btn btn-primary" onclick="durumGuncelle(@Model.Id, 'DevamEdiyor')">
+                                        <i class="bx bx-play-circle me-1"></i>Başlat
+                                    </button>
+                                }
+                                
+                                @if (Model.Durum != CagriMerkeziUyg.Models.RandevuDurumu.Tamamlandi)
+                                {
+                                    <button type="button" class="btn btn-success" onclick="durumGuncelle(@Model.Id, 'Tamamlandi')">
+                                        <i class="bx bx-check-circle me-1"></i>Tamamla
+                                    </button>
+                                }
+                                
+                                @if (Model.Durum != CagriMerkeziUyg.Models.RandevuDurumu.Iptal)
+                                {
+                                    <button type="button" class="btn btn-danger" onclick="durumGuncelle(@Model.Id, 'Iptal')">
+                                        <i class="bx bx-x-circle me-1"></i>İptal Et
+                                    </button>
+                                }
+                                
+                                <button type="button" class="btn btn-warning" onclick="durumGuncelle(@Model.Id, 'Ertelendi')">
+                                    <i class="bx bx-time me-1"></i>Ertele
+                                </button>
+                            </div>
+
+                            <form asp-action="Sil" method="post" class="d-inline float-end" onsubmit="return confirm('Bu randevuyu silmek istediğinizden emin misiniz?');">
+                                <input type="hidden" name="id" value="@Model.Id" />
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bx bx-trash me-1"></i>Sil
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function durumGuncelle(id, durum) {
+            if (confirm('Randevu durumunu güncellemek istediğinizden emin misiniz?')) {
+                fetch('@Url.Action("DurumGuncelle")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': '@Html.AntiForgeryToken()'
+                    },
+                    body: JSON.stringify({ id: id, durum: durum })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        location.reload();
+                    }
+                })
+                .catch(error => {
+                    console.error('Hata:', error);
+                    alert('Durum güncellenirken bir hata oluştu!');
+                });
+            }
+        }
+    </script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

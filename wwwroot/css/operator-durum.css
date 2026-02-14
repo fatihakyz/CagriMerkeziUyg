@@ -1,0 +1,80 @@
+/* Operatör Durum Yönetimi CSS */
+
+/* Durum Badge Stilleri */
+.durum-badge-wrapper {
+    display: inline-block;
+    animation: fadeIn 0.3s ease-in;
+}
+
+.durum-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+}
+
+.durum-badge.badge-lg {
+    font-size: 1.1rem;
+    padding: 0.85rem 1.75rem;
+}
+
+.durum-badge i {
+    font-size: 1.2rem;
+}
+
+/* Durum Badge Animasyonu */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Dropdown Item Hover Effect */
+.durum-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(5px);
+    transition: all 0.2s ease;
+}
+
+/* Süre Göstergesi Pulse Animasyonu */
+#durumSuresi {
+    font-weight: 600;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+    .durum-badge {
+        font-size: 0.9rem;
+        padding: 0.6rem 1.2rem;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,207 @@
+@model List<CagriMerkeziUyg.Models.MusteriAktiviteler>
+@{
+    ViewData["Title"] = "Çağrı Listesi";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bx bx-phone me-2"></i>Çağrı Listesi
+                </h5>
+                <a href="@Url.Action("YeniCagri", "Operator")" class="btn btn-primary">
+                    <i class="bx bx-plus me-1"></i>Yeni Çağrı
+                </a>
+            </div>
+            
+            <div class="card-body">
+                <!-- Filtreler -->
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <select class="form-select" onchange="filterByStatus(this.value)">
+                            <option value="">Tüm Durumlar</option>
+                            <option value="Yeni" selected="@(ViewBag.SeciliDurum == "Yeni")">Yeni</option>
+                            <option value="Islemde" selected="@(ViewBag.SeciliDurum == "Islemde")">İşlemde</option>
+                            <option value="Beklemede" selected="@(ViewBag.SeciliDurum == "Beklemede")">Beklemede</option>
+                            <option value="Cozumlendi" selected="@(ViewBag.SeciliDurum == "Cozumlendi")">Çözümlendi</option>
+                        </select>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="text-end">
+                            <small class="text-muted">Toplam @ViewBag.ToplamKayit çağrı</small>
+                        </div>
+                    </div>
+                </div>
+                
+                @if (Model != null && Model.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Müşteri</th>
+                                    <th>Konu</th>
+                                    <th>Öncelik</th>
+                                    <th>Durum</th>
+                                    <th>Tarih</th>
+                                    <th>Memnuniyet</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var aktivite in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar avatar-sm me-3">
+                                                    <span class="avatar-initial rounded bg-label-info">
+                                                        @aktivite.Musteri.Ad.Substring(0, 1)@aktivite.Musteri.Soyad.Substring(0, 1)
+                                                    </span>
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-0">@aktivite.Musteri.TamAd</h6>
+                                                    <small class="text-muted">@aktivite.Musteri.TelefonNo</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-label-secondary">@aktivite.Tur</span>
+                                            <br />
+                                            <small class="text-muted">@(aktivite.Aciklama.Length > 50 ? aktivite.Aciklama.Substring(0, 50) + "..." : aktivite.Aciklama)</small>
+                                        </td>
+                                        <td>
+                                            @switch (aktivite.Oncelik)
+                                            {
+                                                case CagriMerkeziUyg.Models.AktiviteOncelik.Acil:
+                                                    <span class="badge bg-danger">Acil</span>
+                                                    break;
+                                                case CagriMerkeziUyg.Models.AktiviteOncelik.Yuksek:
+                                                    <span class="badge bg-warning">Yüksek</span>
+                                                    break;
+                                                case CagriMerkeziUyg.Models.AktiviteOncelik.Normal:
+                                                    <span class="badge bg-primary">Normal</span>
+                                                    break;
+                                                default:
+                                                    <span class="badge bg-secondary">Düşük</span>
+                                                    break;
+                                            }
+                                        </td>
+                                        <td>
+                                            @switch (aktivite.Durum)
+                                            {
+                                                case CagriMerkeziUyg.Models.AktiviteDurumu.Yeni:
+                                                    <span class="badge bg-info">Yeni</span>
+                                                    break;
+                                                case CagriMerkeziUyg.Models.AktiviteDurumu.Islemde:
+                                                    <span class="badge bg-warning">İşlemde</span>
+                                                    break;
+                                                case CagriMerkeziUyg.Models.AktiviteDurumu.Beklemede:
+                                                    <span class="badge bg-secondary">Beklemede</span>
+                                                    break;
+                                                case CagriMerkeziUyg.Models.AktiviteDurumu.Cozumlendi:
+                                                    <span class="badge bg-success">Çözümlendi</span>
+                                                    break;
+                                                default:
+                                                    <span class="badge bg-danger">İptal</span>
+                                                    break;
+                                            }
+                                        </td>
+                                        <td>
+                                            <small>@aktivite.OlusturulmaTarihi.ToString("dd.MM.yyyy HH:mm")</small>
+                                            @if (aktivite.CozumTarihi.HasValue)
+                                            {
+                                                <br />
+                                                <small class="text-success">Çözüm: @aktivite.CozumTarihi.Value.ToString("dd.MM.yyyy HH:mm")</small>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (aktivite.MusteriMemnuniyet.HasValue)
+                                            {
+                                                <div class="d-flex">
+                                                    @for (int i = 1; i <= 5; i++)
+                                                    {
+                                                        if (i <= aktivite.MusteriMemnuniyet.Value)
+                                                        {
+                                                            <i class="bx bxs-star text-warning"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="bx bx-star text-muted"></i>
+                                                        }
+                                                    }
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <small class="text-muted">Değerlendirilmemiş</small>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a href="@Url.Action("CagriDetay", "Operator", new { id = aktivite.Id })" class="btn btn-sm btn-outline-primary">
+                                                <i class="bx bx-detail"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Sayfalama -->
+                    @if (ViewBag.ToplamSayfa > 1)
+                    {
+                        <nav aria-label="Sayfa navigasyonu">
+                            <ul class="pagination justify-content-center">
+                                @if (ViewBag.SayfaNo > 1)
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link" href="@Url.Action("CagriListesi", new { sayfa = ViewBag.SayfaNo - 1, durum = ViewBag.SeciliDurum })">Önceki</a>
+                                    </li>
+                                }
+                                
+                                @for (int i = 1; i <= ViewBag.ToplamSayfa; i++)
+                                {
+                                    <li class="page-item @(i == ViewBag.SayfaNo ? "active" : "")">
+                                        <a class="page-link" href="@Url.Action("CagriListesi", new { sayfa = i, durum = ViewBag.SeciliDurum })">@i</a>
+                                    </li>
+                                }
+                                
+                                @if (ViewBag.SayfaNo < ViewBag.ToplamSayfa)
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link" href="@Url.Action("CagriListesi", new { sayfa = ViewBag.SayfaNo + 1, durum = ViewBag.SeciliDurum })">Sonraki</a>
+                                    </li>
+                                }
+                            </ul>
+                        </nav>
+                    }
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <div class="avatar avatar-xl mb-3 mx-auto">
+                            <span class="avatar-initial rounded bg-label-secondary">
+                                <i class="bx bx-phone bx-lg"></i>
+                            </span>
+                        </div>
+                        <h5 class="mb-1">Çağrı bulunamadı</h5>
+                        <p class="text-muted">Seçili filtrelere uygun çağrı bulunmamaktadır.</p>
+                        <a href="@Url.Action("YeniCagri", "Operator")" class="btn btn-primary">
+                            <i class="bx bx-plus me-1"></i>Yeni Çağrı Oluştur
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+function filterByStatus(durum) {
+    window.location.href = '@Url.Action("CagriListesi", "Operator")?durum=' + durum;
+}
+</script>
+}

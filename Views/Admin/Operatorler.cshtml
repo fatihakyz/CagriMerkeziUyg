@@ -1,0 +1,140 @@
+@model List<CagriMerkeziUyg.Models.Operator>
+@{
+    ViewData["Title"] = "Operatör Yönetimi";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bx bx-group me-2"></i>Operatör Yönetimi
+                </h5>
+                <div>
+                    <a href="@Url.Action("ExportOperatorListesi", "Admin")" class="btn btn-success me-2">
+                        <i class="bx bx-download me-1"></i>Excel'e Aktar
+                    </a>
+                    <a href="@Url.Action("OperatorEkle", "Admin")" class="btn btn-primary">
+                        <i class="bx bx-plus me-1"></i>Yeni Operatör
+                    </a>
+                </div>
+            </div>
+            
+            <div class="card-body">
+                @if (Model != null && Model.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Operatör</th>
+                                    <th>Kullanıcı Adı</th>
+                                    <th>Email</th>
+                                    <th>Telefon</th>
+                                    <th>Rol</th>
+                                    <th>Çalışma Saatleri</th>
+                                    <th>Durum</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var operatorItem in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar avatar-sm me-3">
+                                                    <span class="avatar-initial rounded bg-label-primary">
+                                                        @operatorItem.Ad.Substring(0, 1)@operatorItem.Soyad.Substring(0, 1)
+                                                    </span>
+                                                </div>
+                                                <div>
+                                                    <h6 class="mb-0">@operatorItem.TamAd</h6>
+                                                    <small class="text-muted">Kayıt: @operatorItem.KayitTarihi.ToString("dd.MM.yyyy")</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>@operatorItem.KullaniciAdi</td>
+                                        <td>@operatorItem.Email</td>
+                                        <td>@operatorItem.Telefon</td>
+                                        <td>
+                                            @switch (operatorItem.Rol)
+                                            {
+                                                case CagriMerkeziUyg.Models.OperatorRolu.Admin:
+                                                    <span class="badge bg-danger">Admin</span>
+                                                    break;
+                                                case CagriMerkeziUyg.Models.OperatorRolu.Supervisor:
+                                                    <span class="badge bg-warning">Süpervizör</span>
+                                                    break;
+                                                default:
+                                                    <span class="badge bg-primary">Operatör</span>
+                                                    break;
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (operatorItem.CalismaSaatiBaslangic.HasValue && operatorItem.CalismaSaatiBitis.HasValue)
+                                            {
+                                                <small>@operatorItem.CalismaSaatiBaslangic.Value.ToString("hh\\:mm") - @operatorItem.CalismaSaatiBitis.Value.ToString("hh\\:mm")</small>
+                                            }
+                                            else
+                                            {
+                                                <small class="text-muted">Belirlenmemiş</small>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (operatorItem.Aktif)
+                                            {
+                                                <span class="badge bg-success">Aktif</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">Pasif</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                                    <i class="bx bx-dots-vertical-rounded"></i>
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item" href="@Url.Action("OperatorDuzenle", "Admin", new { id = operatorItem.Id })">
+                                                        <i class="bx bx-edit-alt me-1"></i> Düzenle
+                                                    </a>
+                                                    @if (operatorItem.Aktif)
+                                                    {
+                                                        <form asp-action="OperatorSil" method="post" style="display:inline;" 
+                                                              onsubmit="return confirm('Bu operatörü pasif duruma getirmek istediğinizden emin misiniz?')">
+                                                            <input type="hidden" name="id" value="@operatorItem.Id" />
+                                                            <button type="submit" class="dropdown-item text-danger">
+                                                                <i class="bx bx-user-x me-1"></i> Pasif Yap
+                                                            </button>
+                                                        </form>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <div class="avatar avatar-xl mb-3 mx-auto">
+                            <span class="avatar-initial rounded bg-label-secondary">
+                                <i class="bx bx-user-plus bx-lg"></i>
+                            </span>
+                        </div>
+                        <h5 class="mb-1">Henüz operatör eklenmemiş</h5>
+                        <p class="text-muted">İlk operatörünüzü eklemek için yukarıdaki butonu kullanın.</p>
+                        <a href="@Url.Action("OperatorEkle", "Admin")" class="btn btn-primary">
+                            <i class="bx bx-plus me-1"></i>İlk Operatörü Ekle
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

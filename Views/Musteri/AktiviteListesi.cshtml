@@ -1,0 +1,94 @@
+﻿@model IEnumerable<CagriMerkeziUyg.Models.MusteriAktiviteler>
+
+@if (Model != null && Model.Any())
+{
+    @foreach (var aktivite in Model)
+    {
+        <div class="border-start border-3 border-primary ps-3 mb-3 position-relative">
+            <div class="d-flex justify-content-between align-items-start">
+                <div class="flex-grow-1">
+                    <h6>
+                        <span class="badge bg-@(GetBadgeColor(aktivite.Tur)) me-2">@aktivite.Tur</span>
+                    </h6>
+                    <p>@aktivite.Aciklama</p>
+                    <small class="text-muted">@aktivite.OlusturulmaTarihi.ToString("dd.MM.yyyy HH:mm")</small>
+                </div>
+                <div class="ms-3">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                                type="button"
+                                data-bs-toggle="dropdown">
+                            <i class="bx bx-dots-vertical-rounded"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item"
+                                   href="@Url.Action("AktiviteDuzenle", new { id = aktivite.Id })">
+                                    <i class="bx bx-edit me-2"></i>Düzenle
+                                </a>
+                            </li>
+                            <li>
+                                <button type="button"
+                                        class="dropdown-item text-danger"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#aktiviteSilModal-@aktivite.Id">
+                                    <i class="bx bx-trash me-2"></i>Sil
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Her aktivite için ayrı silme modal'ı -->
+        <div class="modal fade" id="aktiviteSilModal-@aktivite.Id" tabindex="-1">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Aktiviteyi Sil</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="mb-2">Bu aktiviteyi silmek istediğinizden emin misiniz?</p>
+                        <small class="text-muted">
+                            @aktivite.Tur - @aktivite.OlusturulmaTarihi.ToString("dd/MM/yyyy")
+                        </small>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-outline-secondary"
+                                data-bs-dismiss="modal">
+                            İptal
+                        </button>
+                        <form asp-action="AktiviteSil" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@aktivite.Id" />
+                            <button type="submit" class="btn btn-sm btn-danger">Sil</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="text-center py-4">
+        <i class="bx bx-search-alt-2 display-4 text-muted"></i>
+        <p class="text-muted mt-2">Seçilen kriterlere uygun aktivite bulunamadı.</p>
+    </div>
+}
+
+@functions {
+    string GetBadgeColor(CagriMerkeziUyg.Models.AktiviteTuru tur)
+    {
+        return tur switch
+        {
+            CagriMerkeziUyg.Models.AktiviteTuru.Sikayet => "danger",
+            CagriMerkeziUyg.Models.AktiviteTuru.Talep => "warning",
+            CagriMerkeziUyg.Models.AktiviteTuru.Bilgi => "info",
+            CagriMerkeziUyg.Models.AktiviteTuru.Oneri => "success",
+            CagriMerkeziUyg.Models.AktiviteTuru.Diger => "secondary",
+            _ => "primary"
+        };
+    }
+}

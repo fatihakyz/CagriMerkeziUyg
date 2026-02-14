@@ -1,0 +1,140 @@
+@model CagriMerkeziUyg.Models.MusteriAktiviteler
+@{
+    ViewData["Title"] = "Aktivite Düzenle";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bx bx-edit me-1"></i>Aktivite Düzenle
+                </h5>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb breadcrumb-style1 mb-0">
+                        <li class="breadcrumb-item">
+                            <a href="@Url.Action("Detay", new { id = Model.MusteriId })">@Model.Musteri.TamAd</a>
+                        </li>
+                        <li class="breadcrumb-item active">Aktivite Düzenle</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-xl-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Aktivite Bilgileri</h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="AktiviteDuzenle" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="MusteriId" />
+                    <input type="hidden" asp-for="OlusturulmaTarihi" />
+
+                    <div class="mb-3">
+                        <label asp-for="Tur" class="form-label">
+                            <i class="bx bx-category me-1"></i>Aktivite Türü
+                        </label>
+                        <select asp-for="Tur" class="form-select">
+                            <option value="Sikayet">Şikayet</option>
+                            <option value="Talep">Talep</option>
+                            <option value="Bilgi">Bilgi</option>
+                            <option value="Oneri">Öneri</option>
+                            <option value="Diger">Diğer</option>
+                        </select>
+                        <span asp-validation-for="Tur" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Aciklama" class="form-label">
+                            <i class="bx bx-note me-1"></i>Açıklama
+                        </label>
+                        <textarea asp-for="Aciklama" class="form-control" rows="4" 
+                                  style="resize: none;" 
+                                  placeholder="Aktivite açıklamasını giriniz..."></textarea>
+                        <span asp-validation-for="Aciklama" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted">
+                            <i class="bx bx-calendar me-1"></i>Oluşturulma Tarihi
+                        </label>
+                        <div class="fw-medium">
+                            @Model.OlusturulmaTarihi.ToString("dd MMMM yyyy HH:mm", new System.Globalization.CultureInfo("tr-TR"))
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="@Url.Action("Detay", new { id = Model.MusteriId })" class="btn btn-outline-secondary">
+                            <i class="bx bx-arrow-back me-1"></i>Geri Dön
+                        </a>
+                        <div>
+                            <button type="button" class="btn btn-outline-danger me-2" 
+                                    data-bs-toggle="modal" data-bs-target="#silModal">
+                                <i class="bx bx-trash me-1"></i>Sil
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bx bx-check me-1"></i>Güncelle
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="silModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bx bx-trash me-1"></i>Aktiviteyi Sil
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    <h6 class="alert-heading">Dikkat!</h6>
+                    <p class="mb-0">
+                        Bu aktiviteyi silmek istediğinizden emin misiniz?
+                        Bu işlem geri alınamaz.
+                    </p>
+                </div>
+                
+                <div class="mb-2">
+                    <strong>Aktivite Türü:</strong> @Model.Tur
+                </div>
+                <div class="mb-2">
+                    <strong>Tarih:</strong> @Model.OlusturulmaTarihi.ToString("dd/MM/yyyy HH:mm")
+                </div>
+                <div>
+                    <strong>Açıklama:</strong><br>
+                    <span class="text-muted">@Model.Aciklama</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="bx bx-x me-1"></i>İptal
+                </button>
+                <form asp-action="AktiviteSil" method="post" class="d-inline">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bx bx-trash me-1"></i>Evet, Sil
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+
+

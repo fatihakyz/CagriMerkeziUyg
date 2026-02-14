@@ -1,0 +1,328 @@
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<!-- Admin Dashboard Header -->
+<div class="row">
+    <div class="col-12">
+        <div class="card bg-primary text-white mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="card-title text-white mb-1">
+                            <i class="bx bx-shield me-2"></i>Admin Dashboard
+                        </h4>
+                        <p class="card-text">Çağrı Merkezi Yönetim Paneli - @DateTime.Now.ToString("dd MMMM yyyy dddd", new System.Globalization.CultureInfo("tr-TR"))</p>
+                    </div>
+                    <div class="text-end">
+                        <h2 class="text-white">@DateTime.Now.ToString("HH:mm")</h2>
+                        <small>Güncel Saat</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- İstatistik Kartları -->
+<div class="row">
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-12 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div class="card-info">
+                        <p class="card-text">Toplam Müşteri</p>
+                        <div class="d-flex align-items-end mb-2">
+                            <h4 class="card-title mb-0 me-2">@ViewBag.ToplamMusteri</h4>
+                        </div>
+                    </div>
+                    <div class="card-icon">
+                        <span class="badge bg-label-primary rounded p-2">
+                            <i class="bx bx-group bx-sm"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-12 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div class="card-info">
+                        <p class="card-text">Aktif Operatör</p>
+                        <div class="d-flex align-items-end mb-2">
+                            <h4 class="card-title mb-0 me-2">@ViewBag.ToplamOperator</h4>
+                        </div>
+                    </div>
+                    <div class="card-icon">
+                        <span class="badge bg-label-success rounded p-2">
+                            <i class="bx bx-user-check bx-sm"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-12 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div class="card-info">
+                        <p class="card-text">Toplam Çağrı</p>
+                        <div class="d-flex align-items-end mb-2">
+                            <h4 class="card-title mb-0 me-2">@ViewBag.ToplamAktivite</h4>
+                        </div>
+                    </div>
+                    <div class="card-icon">
+                        <span class="badge bg-label-info rounded p-2">
+                            <i class="bx bx-phone bx-sm"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-12 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div class="card-info">
+                        <p class="card-text">Bugünkü Çağrı</p>
+                        <div class="d-flex align-items-end mb-2">
+                            <h4 class="card-title mb-0 me-2">@ViewBag.BugunkuAktiviteler</h4>
+                        </div>
+                    </div>
+                    <div class="card-icon">
+                        <span class="badge bg-label-warning rounded p-2">
+                            <i class="bx bx-calendar bx-sm"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hızlı İşlemler ve Performans -->
+<div class="row">
+    <!-- Hızlı İşlemler -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bx bx-zap me-1"></i>Hızlı İşlemler
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <a href="@Url.Action("CanliDurum", "Admin")" class="card border-0 shadow-sm h-100 text-decoration-none">
+                            <div class="card-body text-center">
+                                <div class="avatar avatar-lg mb-3">
+                                    <span class="avatar-initial rounded bg-label-danger">
+                                        <i class="bx bx-radio-circle-marked bx-lg"></i>
+                                    </span>
+                                </div>
+                                <h6 class="mb-1">Canlı Durum Takibi</h6>
+                                <small class="text-muted">Operatör durumları</small>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="col-6">
+                        <a href="@Url.Action("Operatorler", "Admin")" class="card border-0 shadow-sm h-100 text-decoration-none">
+                            <div class="card-body text-center">
+                                <div class="avatar avatar-lg mb-3">
+                                    <span class="avatar-initial rounded bg-label-primary">
+                                        <i class="bx bx-user-plus bx-lg"></i>
+                                    </span>
+                                </div>
+                                <h6 class="mb-1">Operatör Yönetimi</h6>
+                                <small class="text-muted">Operatör ekle/düzenle</small>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="col-6">
+                        <a href="@Url.Action("PerformansRaporlari", "Admin")" class="card border-0 shadow-sm h-100 text-decoration-none">
+                            <div class="card-body text-center">
+                                <div class="avatar avatar-lg mb-3">
+                                    <span class="avatar-initial rounded bg-label-success">
+                                        <i class="bx bx-line-chart bx-lg"></i>
+                                    </span>
+                                </div>
+                                <h6 class="mb-1">Performans Raporları</h6>
+                                <small class="text-muted">Detaylı analiz</small>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="col-6">
+                        <a href="@Url.Action("GunlukRapor", "Admin")" class="card border-0 shadow-sm h-100 text-decoration-none">
+                            <div class="card-body text-center">
+                                <div class="avatar avatar-lg mb-3">
+                                    <span class="avatar-initial rounded bg-label-info">
+                                        <i class="bx bx-calendar-check bx-lg"></i>
+                                    </span>
+                                </div>
+                                <h6 class="mb-1">Günlük Rapor</h6>
+                                <small class="text-muted">Bugünkü aktiviteler</small>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="col-6">
+                        <a href="@Url.Action("AylikRapor", "Admin")" class="card border-0 shadow-sm h-100 text-decoration-none">
+                            <div class="card-body text-center">
+                                <div class="avatar avatar-lg mb-3">
+                                    <span class="avatar-initial rounded bg-label-warning">
+                                        <i class="bx bx-bar-chart bx-lg"></i>
+                                    </span>
+                                </div>
+                                <h6 class="mb-1">Aylık Rapor</h6>
+                                <small class="text-muted">Aylık özet</small>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="col-6">
+                        <a href="@Url.Action("SablonYonetimi", "Admin")" class="card border-0 shadow-sm h-100 text-decoration-none">
+                            <div class="card-body text-center">
+                                <div class="avatar avatar-lg mb-3">
+                                    <span class="avatar-initial rounded bg-label-secondary">
+                                        <i class="bx bx-message-square-dots bx-lg"></i>
+                                    </span>
+                                </div>
+                                <h6 class="mb-1">Şablon Yönetimi</h6>
+                                <small class="text-muted">Cevap şablonları</small>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- En İyi Performans -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bx bx-trophy me-1"></i>Bu Ayın En İyi Performansı
+                </h5>
+            </div>
+            <div class="card-body">
+                @if (ViewBag.EnIyiOperator != null)
+                {
+                    <div class="text-center">
+                        <div class="avatar avatar-xl mb-3">
+                            <span class="avatar-initial rounded bg-label-success">
+                                <i class="bx bx-user bx-lg"></i>
+                            </span>
+                        </div>
+                        <h5 class="mb-2">@ViewBag.EnIyiOperator</h5>
+                        <p class="text-muted mb-2">@ViewBag.EnIyiOperatorSkor çözülmüş çağrı</p>
+                        <span class="badge bg-success">Ayın Operatörü</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center text-muted">
+                        <p>Henüz performans verisi bulunmamaktadır.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Son Aktiviteler -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bx bx-time me-1"></i>Sistem Durumu
+                </h5>
+                <small class="text-muted">Genel sistem sağlığı</small>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="flex-shrink-0">
+                                <div class="avatar avatar-sm">
+                                    <span class="avatar-initial rounded bg-label-success">
+                                        <i class="bx bx-check"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1">Veritabanı Bağlantısı</h6>
+                                <small class="text-success">Aktif</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="flex-shrink-0">
+                                <div class="avatar avatar-sm">
+                                    <span class="avatar-initial rounded bg-label-success">
+                                        <i class="bx bx-check"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1">Sistem Performansı</h6>
+                                <small class="text-success">Optimal</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="flex-shrink-0">
+                                <div class="avatar avatar-sm">
+                                    <span class="avatar-initial rounded bg-label-warning">
+                                        <i class="bx bx-time"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1">Son Yedekleme</h6>
+                                <small class="text-warning">2 saat önce</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,194 @@
+@{
+    ViewData["Title"] = "Müşteri Ara";
+}
+
+<!-- Header -->
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bx bx-search me-1"></i>Müşteri Ara</h5>
+                <small class="text-muted">Telefon numarası ile müşteri arayın</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Arama Formu -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <form method="post" id="aramaForm">
+                    <div class="mb-3">
+                        <label for="telefonNo" class="form-label">
+                            <i class="bx bx-phone me-1"></i>Telefon Numarası
+                        </label>
+                        <input type="tel" 
+                               class="form-control form-control-lg" 
+                               id="telefonNo" 
+                               name="telefonNo" 
+                               placeholder="0555 123 45 67" 
+                               value="@ViewBag.TelefonNo"
+                               required 
+                               autocomplete="off" />
+                        <div class="form-text">
+                            Örnek: 0555 123 45 67, 05551234567
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bx bx-search me-1"></i>Müşteri Ara
+                        </button>
+                    </div>
+                </form>
+                
+                @if (ViewBag.Message != null)
+                {
+                    <div class="alert alert-warning mt-4" role="alert">
+                        <h6 class="alert-heading">
+                            <i class="bx bx-info-circle me-1"></i>Müşteri Bulunamadı
+                        </h6>
+                        <p class="mb-2">@ViewBag.Message</p>
+                        <hr>
+                        <div class="d-flex gap-2">
+                            <a href="@Url.Action("YeniKayit", new { telefonNo = ViewBag.TelefonNo })" 
+                               class="btn btn-success btn-sm">
+                                <i class="bx bx-user-plus me-1"></i>Yeni Müşteri Ekle
+                            </a>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="temizleForm()">
+                                <i class="bx bx-refresh me-1"></i>Yeni Arama
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    
+    <!-- Hızlı İşlemler -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="card-title mb-0">
+                    <i class="bx bx-zap me-1"></i>Hızlı İşlemler
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="@Url.Action("YeniKayit")" class="btn btn-outline-primary">
+                        <i class="bx bx-user-plus me-2"></i>Yeni Müşteri Ekle
+                    </a>
+                    <a href="@Url.Action("Liste")" class="btn btn-outline-info">
+                        <i class="bx bx-list-ul me-2"></i>Tüm Müşteriler
+                    </a>
+                    <a href="@Url.Action("Index", "Home")" class="btn btn-outline-secondary">
+                        <i class="bx bx-home me-2"></i>Ana Sayfa
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- İstatistikler -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="card-title mb-0">
+                    <i class="bx bx-stats me-1"></i>İstatistikler
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-4">
+                        <div class="border-end">
+                            <h4 class="mb-1 text-primary">@ViewBag.ToplamMusteri</h4>
+                            <small class="text-muted">Toplam<br>Müşteri</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="border-end">
+                            <h4 class="mb-1 text-success">@ViewBag.BugunkuKayit</h4>
+                            <small class="text-muted">Bugünkü<br>Kayıt</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <h4 class="mb-1 text-info">@ViewBag.SonArama</h4>
+                        <small class="text-muted">Son<br>Arama</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Messages -->
+@if (TempData["Success"] != null)
+{
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050">
+        <div class="toast show" role="alert">
+            <div class="toast-header text-success">
+                <i class="bx bx-check-circle me-2"></i>
+                <strong class="me-auto">Başarılı</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body">
+                @TempData["Success"]
+            </div>
+        </div>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050">
+        <div class="toast show" role="alert">
+            <div class="toast-header text-danger">
+                <i class="bx bx-error-circle me-2"></i>
+                <strong class="me-auto">Hata</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body">
+                @TempData["Error"]
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        // Form temizleme
+        function temizleForm() {
+            document.getElementById('telefonNo').value = '';
+            document.getElementById('telefonNo').focus();
+        }
+        
+        // Sayfa yüklendiğinde telefon input'una focus
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('telefonNo').focus();
+        });
+        
+        // Telefon numarası formatı
+        document.getElementById('telefonNo').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 0 && value[0] === '0') {
+                if (value.length <= 11) {
+                    if (value.length > 3) {
+                        value = value.substring(0, 4) + ' ' + value.substring(4);
+                    }
+                    if (value.length > 8) {
+                        value = value.substring(0, 8) + ' ' + value.substring(8);
+                    }
+                    if (value.length > 11) {
+                        value = value.substring(0, 11) + ' ' + value.substring(11);
+                    }
+                    e.target.value = value;
+                }
+            }
+        });
+        
+        // Toast otomatik kapatma
+        setTimeout(function() {
+            $('.toast').fadeOut();
+        }, 5000);
+    </script>
+}

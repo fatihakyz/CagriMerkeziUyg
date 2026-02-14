@@ -1,0 +1,155 @@
+@model IEnumerable<CagriMerkeziUyg.Models.Randevu>
+
+@{
+    ViewData["Title"] = "Bugünün Randevuları";
+}
+
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bx bx-calendar-star me-2"></i>Bugünün Randevuları
+                        <span class="badge bg-primary">@Model.Count()</span>
+                    </h5>
+                    <div>
+                        <a href="@Url.Action("Olustur")" class="btn btn-sm btn-primary">
+                            <i class="bx bx-plus me-1"></i>Yeni Randevu
+                        </a>
+                        <a href="@Url.Action("Index")" class="btn btn-sm btn-secondary">
+                            <i class="bx bx-calendar me-1"></i>Takvim
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (!Model.Any())
+                    {
+                        <div class="alert alert-info">
+                            <i class="bx bx-info-circle me-2"></i>
+                            Bugün için randevu bulunmamaktadır.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Saat</th>
+                                        <th>Başlık</th>
+                                        <th>Tip</th>
+                                        <th>Müşteri</th>
+                                        <th>Operatör</th>
+                                        <th>Öncelik</th>
+                                        <th>Durum</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var randevu in Model.OrderBy(r => r.RandevuZamani))
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@randevu.RandevuZamani.ToString("HH:mm")</strong>
+                                                @if (randevu.BitisZamani.HasValue)
+                                                {
+                                                    <br><small class="text-muted">@randevu.BitisZamani.Value.ToString("HH:mm")</small>
+                                                }
+                                            </td>
+                                            <td>
+                                                <strong>@randevu.Baslik</strong>
+                                                @if (randevu.Yaklasıyor)
+                                                {
+                                                    <span class="badge bg-warning ms-1">Yaklaşıyor</span>
+                                                }
+                                                @if (randevu.Gecti && randevu.Durum == CagriMerkeziUyg.Models.RandevuDurumu.Bekliyor)
+                                                {
+                                                    <span class="badge bg-danger ms-1">Geçti</span>
+                                                }
+                                            </td>
+                                            <td><span class="badge bg-info">@randevu.Tip</span></td>
+                                            <td>
+                                                @if (randevu.Musteri != null)
+                                                {
+                                                    @randevu.Musteri.TamAd
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (randevu.Operator != null)
+                                                {
+                                                    @randevu.Operator.TamAd
+                                                }
+                                            </td>
+                                            <td>
+                                                @{
+                                                    var oncelikClass = randevu.Oncelik switch
+                                                    {
+                                                        CagriMerkeziUyg.Models.RandevuOncelik.Dusuk => "bg-info",
+                                                        CagriMerkeziUyg.Models.RandevuOncelik.Normal => "bg-success",
+                                                        CagriMerkeziUyg.Models.RandevuOncelik.Yuksek => "bg-warning",
+                                                        CagriMerkeziUyg.Models.RandevuOncelik.Acil => "bg-danger",
+                                                        _ => "bg-secondary"
+                                                    };
+                                                }
+                                                <span class="badge @oncelikClass">@randevu.Oncelik</span>
+                                            </td>
+                                            <td>
+                                                @{
+                                                    var durumClass = randevu.Durum switch
+                                                    {
+                                                        CagriMerkeziUyg.Models.RandevuDurumu.Bekliyor => "bg-warning",
+                                                        CagriMerkeziUyg.Models.RandevuDurumu.DevamEdiyor => "bg-primary",
+                                                        CagriMerkeziUyg.Models.RandevuDurumu.Tamamlandi => "bg-success",
+                                                        CagriMerkeziUyg.Models.RandevuDurumu.Iptal => "bg-danger",
+                                                        CagriMerkeziUyg.Models.RandevuDurumu.Ertelendi => "bg-secondary",
+                                                        _ => "bg-secondary"
+                                                    };
+                                                }
+                                                <span class="badge @durumClass">@randevu.Durum</span>
+                                            </td>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button type="button" class="btn btn-sm btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                                    </button>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" href="@Url.Action("Detay", new { id = randevu.Id })">
+                                                            <i class="bx bx-show me-1"></i> Detay
+                                                        </a>
+                                                        <a class="dropdown-item" href="@Url.Action("Duzenle", new { id = randevu.Id })">
+                                                            <i class="bx bx-edit me-1"></i> Düzenle
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

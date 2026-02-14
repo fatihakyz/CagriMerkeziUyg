@@ -1,0 +1,492 @@
+﻿@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+<!-- Hoş Geldiniz -->
+<div class="row">
+    <div class="col-12">
+        <div class="card bg-primary text-white mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="card-title text-white mb-1">
+                            <i class="bx bx-phone me-2"></i>Çağrı Merkezi Uygulaması
+                        </h4>
+                        <p class="card-text">
+                            Merhaba! Bugün @DateTime.Now.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("tr-TR")) - @DateTime.Now.ToString("dddd", new System.Globalization.CultureInfo("tr-TR"))
+                        </p>
+                    </div>
+                    <div class="text-end">
+                        <h2 class="text-white">@DateTime.Now.ToString("HH:mm")</h2>
+                        <small>Güncel Saat</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- İstatistik Kartları -->
+<div class="row">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <span class="fw-semibold d-block mb-1">Toplam Müşteri</span>
+                        <h3 class="card-title mb-2">@ViewBag.ToplamMusteri</h3>
+                        <small class="text-success fw-semibold">
+                            <i class="bx bx-up-arrow-alt"></i> Aktif
+                        </small>
+                    </div>
+                    <div class="avatar flex-shrink-0">
+                        <span class="avatar-initial rounded bg-label-primary">
+                            <i class="bx bx-user bx-sm"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <span class="fw-semibold d-block mb-1">Bugünkü Aramalar</span>
+                        <h3 class="card-title mb-2">@ViewBag.BugunkuAramalar</h3>
+                        <small class="text-muted fw-semibold">
+                            <i class="bx bx-phone"></i> Çağrı
+                        </small>
+                    </div>
+                    <div class="avatar flex-shrink-0">
+                        <span class="avatar-initial rounded bg-label-success">
+                            <i class="bx bx-phone-call bx-sm"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <span class="fw-semibold d-block mb-1">Yeni Kayıtlar</span>
+                        <h3 class="card-title mb-2">@ViewBag.BugunkuKayit</h3>
+                        <small class="text-info fw-semibold">
+                            <i class="bx bx-calendar"></i> Bugün
+                        </small>
+                    </div>
+                    <div class="avatar flex-shrink-0">
+                        <span class="avatar-initial rounded bg-label-info">
+                            <i class="bx bx-user-plus bx-sm"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <span class="fw-semibold d-block mb-1">Çözülen Talepler</span>
+                        <h3 class="card-title mb-2">@ViewBag.CozulenTalepler</h3>
+                        <small class="text-warning fw-semibold">
+                            <i class="bx bx-check-circle"></i> Tamamlandı
+                        </small>
+                    </div>
+                    <div class="avatar flex-shrink-0">
+                        <span class="avatar-initial rounded bg-label-warning">
+                            <i class="bx bx-task bx-sm"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Aktivite İstatistikleri Grafikleri -->
+<div class="row mt-4">
+    <div class="col-xl-6 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bx bx-pie-chart-alt-2 me-1"></i>Aktivite Türleri
+                </h5>
+                <small class="text-muted">En çok kullanılan türler</small>
+            </div>
+            <div class="card-body">
+                <canvas id="aktiviteTurleriGrafik" height="300"></canvas>
+                <div id="aktiviteTurleriYukleniyor" class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Veriler yükleniyor...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-6 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bx bx-line-chart me-1"></i>Aylık Aktivite Trendi
+                </h5>
+                <small class="text-muted">Son 6 aylık trend</small>
+            </div>
+            <div class="card-body">
+                <canvas id="aylikTrendGrafik" height="300"></canvas>
+                <div id="aylikTrendYukleniyor" class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Veriler yükleniyor...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-4 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bx bx-doughnut-chart me-1"></i>Müşteri Aktivite Durumu
+                </h5>
+            </div>
+            <div class="card-body">
+                <canvas id="musteriDurumGrafik" height="300"></canvas>
+                <div id="musteriDurumYukleniyor" class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Veriler yükleniyor...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-8 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bx bx-trending-up me-1"></i>Aktivite Özeti
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-3">
+                        <div class="border-end">
+                            <h4 id="toplamAktiviteSayi" class="text-primary mb-1">-</h4>
+                            <small class="text-muted">Toplam Aktivite</small>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="border-end">
+                            <h4 id="bugunkuAktiviteSayi" class="text-success mb-1">-</h4>
+                            <small class="text-muted">Bugünkü Aktivite</small>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="border-end">
+                            <h4 id="aktifMusteriSayi" class="text-info mb-1">-</h4>
+                            <small class="text-muted">Aktif Müşteri</small>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <h4 id="pasifMusteriSayi" class="text-warning mb-1">-</h4>
+                        <small class="text-muted">Pasif Müşteri</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hızlı İşlemler -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bx bx-zap me-1"></i>Hızlı İşlemler
+                </h5>
+                <small class="text-muted">En çok kullanılan işlemler</small>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <a href="@Url.Action("Ara", "Musteri")" class="card border-0 shadow-sm h-100 text-decoration-none">
+                            <div class="card-body text-center">
+                                <div class="avatar avatar-lg mb-3">
+                                    <span class="avatar-initial rounded bg-label-primary">
+                                        <i class="bx bx-search bx-lg"></i>
+                                    </span>
+                                </div>
+                                <h6 class="mb-1">Müşteri Ara</h6>
+                                <small class="text-muted">Telefon numarası ile arama</small>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <a href="@Url.Action("YeniKayit", "Musteri")" class="card border-0 shadow-sm h-100 text-decoration-none">
+                            <div class="card-body text-center">
+                                <div class="avatar avatar-lg mb-3">
+                                    <span class="avatar-initial rounded bg-label-success">
+                                        <i class="bx bx-user-plus bx-lg"></i>
+                                    </span>
+                                </div>
+                                <h6 class="mb-1">Yeni Müşteri</h6>
+                                <small class="text-muted">Müşteri kaydı oluştur</small>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <a href="@Url.Action("Liste", "Musteri")" class="card border-0 shadow-sm h-100 text-decoration-none">
+                            <div class="card-body text-center">
+                                <div class="avatar avatar-lg mb-3">
+                                    <span class="avatar-initial rounded bg-label-info">
+                                        <i class="bx bx-list-ul bx-lg"></i>
+                                    </span>
+                                </div>
+                                <h6 class="mb-1">Müşteri Listesi</h6>
+                                <small class="text-muted">Tüm müşterileri görüntüle</small>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body text-center">
+                                <div class="avatar avatar-lg mb-3">
+                                    <span class="avatar-initial rounded bg-label-warning">
+                                        <i class="bx bx-stats bx-lg"></i>
+                                    </span>
+                                </div>
+                                <h6 class="mb-1">Raporlar</h6>
+                                <small class="text-muted">İstatistik ve raporlar</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Hızlı Arama -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="card-title mb-0">
+                    <i class="bx bx-search me-1"></i>Hızlı Arama
+                </h6>
+            </div>
+            <div class="card-body">
+                <form action="@Url.Action("Ara", "Musteri")" method="post">
+                    <div class="input-group mb-2">
+                        <input type="tel" class="form-control" name="telefonNo" placeholder="0555 123 45 67" />
+                        <button class="btn btn-primary" type="submit">
+                            <i class="bx bx-search"></i>
+                        </button>
+                    </div>
+                    <small class="form-text text-muted">
+                        Telefon numarası ile hızlı arama
+                    </small>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Son Aktiviteler -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="card-title mb-0">
+                    <i class="bx bx-time me-1"></i>Son Aktiviteler
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-point timeline-point-primary"></div>
+                        <div class="timeline-event">
+                            <div class="timeline-header mb-1">
+                                <h6 class="mb-0">Sistem Hazır</h6>
+                                <small class="text-muted">Az önce</small>
+                            </div>
+                            <p class="mb-0">Çağrı merkezi aktif!</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-point timeline-point-success"></div>
+                        <div class="timeline-event">
+                            <div class="timeline-header mb-1">
+                                <h6 class="mb-0">Örnek Veriler</h6>
+                                <small class="text-muted">Başlangıç</small>
+                            </div>
+                            <p class="mb-0">2 müşteri kaydı mevcut</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Chart.js kütüphanesi -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // Grafikleri yükle
+            aktiviteIstatistikleriniYukle();
+        });
+
+        function aktiviteIstatistikleriniYukle() {
+            // AJAX ile istatistikleri çek
+            $.ajax({
+                url: '@Url.Action("AktiviteIstatistikleri", "Musteri")',
+                type: 'GET',
+                success: function(data) {
+                    // Yükleniyor göstergelerini gizle
+                    $('#aktiviteTurleriYukleniyor').hide();
+                    $('#aylikTrendYukleniyor').hide();
+                    $('#musteriDurumYukleniyor').hide();
+                    
+                    // Grafikleri oluştur
+                    aktiviteTurleriGrafiginiOlustur(data.aktiviteTurleri);
+                    aylikTrendGrafiginiOlustur(data.aylikTrend);
+                    musteriDurumGrafiginiOlustur(data.musteriAnalizi);
+                    
+                    // Özet sayıları güncelle
+                    ozetSayilariniGuncelle(data);
+                },
+                error: function() {
+                    console.error('İstatistikler yüklenirken hata oluştu');
+                    $('#aktiviteTurleriYukleniyor').html('<p class="text-danger">Veri yüklenemedi</p>');
+                    $('#aylikTrendYukleniyor').html('<p class="text-danger">Veri yüklenemedi</p>');
+                    $('#musteriDurumYukleniyor').html('<p class="text-danger">Veri yüklenemedi</p>');
+                }
+            });
+        }
+
+        // Aktivite türleri pasta grafiği
+        function aktiviteTurleriGrafiginiOlustur(data) {
+            const ctx = document.getElementById('aktiviteTurleriGrafik').getContext('2d');
+            const renkler = ['#dc3545', '#ffc107', '#17a2b8', '#28a745', '#6c757d'];
+            
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: data.map(item => item.tur),
+                    datasets: [{
+                        data: data.map(item => item.sayi),
+                        backgroundColor: renkler.slice(0, data.length),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Aylık trend çizgi grafiği
+        function aylikTrendGrafiginiOlustur(data) {
+            const ctx = document.getElementById('aylikTrendGrafik').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.map(item => {
+                        const [yil, ay] = item.tarih.split('-');
+                        const ayIsimleri = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+                        return ayIsimleri[parseInt(ay) - 1] + ' ' + yil;
+                    }),
+                    datasets: [{
+                        label: 'Aktivite Sayısı',
+                        data: data.map(item => item.sayi),
+                        borderColor: '#007bff',
+                        backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Müşteri durumu halka grafiği
+        function musteriDurumGrafiginiOlustur(data) {
+            const ctx = document.getElementById('musteriDurumGrafik').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Aktif Müşteri', 'Pasif Müşteri'],
+                    datasets: [{
+                        data: [data.aktifMusteri, data.pasifMusteri],
+                        backgroundColor: ['#28a745', '#dc3545'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Özet sayıları güncelle
+        function ozetSayilariniGuncelle(data) {
+            let toplamAktivite = 0;
+            let bugunkuAktivite = 0;
+            
+            // Aktivite türlerinden toplam sayı hesapla
+            data.aktiviteTurleri.forEach(item => {
+                toplamAktivite += item.sayi;
+            });
+            
+            // Bugünkü aktiviteleri hesapla (basit bir yaklaşım)
+            if (data.aylikTrend.length > 0) {
+                bugunkuAktivite = Math.floor(data.aylikTrend[data.aylikTrend.length - 1].sayi / 30);
+            }
+            
+            $('#toplamAktiviteSayi').text(toplamAktivite);
+            $('#bugunkuAktiviteSayi').text(bugunkuAktivite);
+            $('#aktifMusteriSayi').text(data.musteriAnalizi.aktifMusteri);
+            $('#pasifMusteriSayi').text(data.musteriAnalizi.pasifMusteri);
+        }
+    </script>
+}

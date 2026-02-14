@@ -1,0 +1,211 @@
+@model List<CagriMerkeziUyg.Models.AramaLog>
+@{
+    ViewData["Title"] = "Arama Geçmişi";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">📞 Arama Geçmişi</h3>
+                    <div>
+                        <button type="button" class="btn btn-primary" onclick="telefonYoneticisi.showTelefonPaneli()">
+                            <i class="fas fa-phone"></i> Yeni Arama
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if (Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Tarih/Saat</th>
+                                        <th>Tip</th>
+                                        <th>Telefon</th>
+                                        <th>Müşteri</th>
+                                        <th>Operatör</th>
+                                        <th>Süre</th>
+                                        <th>Durum</th>
+                                        <th>Notlar</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var arama in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@arama.BaslangicZamani.ToString("dd.MM.yyyy")</strong>
+                                                <br><small class="text-muted">@arama.BaslangicZamani.ToString("HH:mm:ss")</small>
+                                            </td>
+                                            <td>
+                                                @{
+                                                    var tipRenk = arama.Tip == CagriMerkeziUyg.Models.AramaTipi.Gelen ? "success" : "primary";
+                                                    var tipIcon = arama.Tip == CagriMerkeziUyg.Models.AramaTipi.Gelen ? "fa-phone-volume" : "fa-phone";
+                                                }
+                                                <span class="badge bg-@tipRenk">
+                                                    <i class="fas @tipIcon"></i> @arama.TipMetni
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a href="#" class="telefon-ara-btn" data-telefon="@arama.TelefonNo" data-musteri-id="@arama.MusteriId">
+                                                    <i class="fas fa-phone text-success"></i> @arama.TelefonNo
+                                                </a>
+                                            </td>
+                                            <td>
+                                                @if (arama.Musteri != null)
+                                                {
+                                                    <strong>@arama.Musteri.TamAd</strong>
+                                                    @if (!string.IsNullOrEmpty(arama.Musteri.Email))
+                                                    {
+                                                        <br><small class="text-muted">@arama.Musteri.Email</small>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">Bilinmiyor</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (arama.Operator != null)
+                                                {
+                                                    <span>@arama.Operator.TamAd</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (arama.Sure.HasValue)
+                                                {
+                                                    <span class="badge bg-info">@arama.TamSure</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @{
+                                                    var durumRenk = arama.Durum.ToString() switch {
+                                                        "Tamamlandi" => "success",
+                                                        "Devam" => "primary",
+                                                        "Baslatildi" => "warning",
+                                                        "Cevapsiz" => "danger",
+                                                        "Mesgul" => "secondary",
+                                                        "Iptal" => "dark",
+                                                        _ => "secondary"
+                                                    };
+                                                }
+                                                <span class="badge bg-@durumRenk">@arama.DurumMetni</span>
+                                            </td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(arama.Notlar))
+                                                {
+                                                    <span class="text-truncate" style="max-width: 150px;" title="@arama.Notlar">
+                                                        @arama.Notlar
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <button type="button" class="btn btn-outline-success telefon-ara-btn" 
+                                                            data-telefon="@arama.TelefonNo" data-musteri-id="@arama.MusteriId"
+                                                            title="Tekrar Ara">
+                                                        <i class="fas fa-redo"></i>
+                                                    </button>
+                                                    @if (arama.MusteriId.HasValue)
+                                                    {
+                                                        <a href="@Url.Action("Detay", "Musteri", new { id = arama.MusteriId })" 
+                                                           class="btn btn-outline-primary" title="Müşteri Detay">
+                                                            <i class="fas fa-user"></i>
+                                                        </a>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Sayfalama -->
+                        @if (ViewBag.ToplamKayit > 20)
+                        {
+                            <nav aria-label="Arama geçmişi sayfalama">
+                                <ul class="pagination justify-content-center">
+                                    @{
+                                        var toplamSayfa = (int)Math.Ceiling((double)ViewBag.ToplamKayit / 20);
+                                        var mevcutSayfa = ViewBag.SayfaNo;
+                                    }
+                                    
+                                    @if (mevcutSayfa > 1)
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" href="?sayfa=@(mevcutSayfa - 1)">Önceki</a>
+                                        </li>
+                                    }
+
+                                    @for (int i = Math.Max(1, mevcutSayfa - 2); i <= Math.Min(toplamSayfa, mevcutSayfa + 2); i++)
+                                    {
+                                        <li class="page-item @(i == mevcutSayfa ? "active" : "")">
+                                            <a class="page-link" href="?sayfa=@i">@i</a>
+                                        </li>
+                                    }
+
+                                    @if (mevcutSayfa < toplamSayfa)
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" href="?sayfa=@(mevcutSayfa + 1)">Sonraki</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </nav>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">
+                                    <i class="fas fa-phone-slash fa-3x text-muted"></i>
+                                </div>
+                                <h5 class="empty-state-title mt-3">Henüz arama geçmişi yok</h5>
+                                <p class="empty-state-text text-muted">
+                                    İlk aramanızı yapmak için "Yeni Arama" butonunu kullanın.
+                                </p>
+                                <button type="button" class="btn btn-primary" onclick="telefonYoneticisi.showTelefonPaneli()">
+                                    <i class="fas fa-phone"></i> İlk Aramayı Yap
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Tooltip'leri etkinleştir
+            $('[title]').tooltip();
+
+            // Tablo satırlarına hover efekti
+            $('tbody tr').hover(
+                function() { $(this).addClass('table-active'); },
+                function() { $(this).removeClass('table-active'); }
+            );
+        });
+    </script>
+}
+

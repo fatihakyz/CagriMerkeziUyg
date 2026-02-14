@@ -1,0 +1,281 @@
+@{
+    ViewData["Title"] = "Performansım";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">📊 Performans Özeti</h3>
+                </div>
+                <div class="card-body">
+                    <!-- Filtre Bölümü -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <label for="baslangic" class="form-label">Başlangıç Tarihi</label>
+                            <input type="date" class="form-control" id="baslangic" name="baslangic" 
+                                   value="@ViewBag.BaslangicTarihi">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="bitis" class="form-label">Bitiş Tarihi</label>
+                            <input type="date" class="form-control" id="bitis" name="bitis" 
+                                   value="@ViewBag.BitisTarihi">
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button type="button" class="btn btn-primary" onclick="filtrele()">
+                                <i class="fas fa-filter"></i> Filtrele
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Performans Kartları -->
+                    <div class="row mb-4">
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="card bg-primary text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h4 class="mb-0">@ViewBag.ToplamCagri</h4>
+                                            <small>Toplam Çağrı</small>
+                                        </div>
+                                        <div class="align-self-center">
+                                            <i class="fas fa-phone fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="card bg-success text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h4 class="mb-0">@ViewBag.CozulenCagri</h4>
+                                            <small>Çözülen Çağrı</small>
+                                        </div>
+                                        <div class="align-self-center">
+                                            <i class="fas fa-check-circle fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="card bg-info text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h4 class="mb-0">@ViewBag.CozumOrani%</h4>
+                                            <small>Çözüm Oranı</small>
+                                        </div>
+                                        <div class="align-self-center">
+                                            <i class="fas fa-percentage fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="card bg-warning text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h4 class="mb-0">@ViewBag.OrtalamaMemnuniyet</h4>
+                                            <small>Ort. Memnuniyet</small>
+                                        </div>
+                                        <div class="align-self-center">
+                                            <i class="fas fa-star fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Günlük Performans Tablosu -->
+                    <div class="row">
+                        <div class="col-12">
+                            <h5>Günlük Performans Detayı</h5>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Tarih</th>
+                                            <th>Toplam Çağrı</th>
+                                            <th>Çözülen</th>
+                                            <th>Bekleyen</th>
+                                            <th>İptal</th>
+                                            <th>Çözüm Oranı</th>
+                                            <th>Ort. Çağrı Süresi</th>
+                                            <th>Memnuniyet</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (ViewBag.GunlukPerformans != null)
+                                        {
+                                            @foreach (var gun in ViewBag.GunlukPerformans)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <strong>@gun.Tarih.ToString("dd.MM.yyyy")</strong>
+                                                        <br><small class="text-muted">@gun.Tarih.ToString("dddd", new System.Globalization.CultureInfo("tr-TR"))</small>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-primary">@gun.ToplamCagri</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-success">@gun.CozulenCagri</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-warning">@gun.BekleyenCagri</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-danger">@gun.IptalCagri</span>
+                                                    </td>
+                                                    <td>
+                                                        @{
+                                                            var cozumOrani = gun.ToplamCagri > 0 ? (double)gun.CozulenCagri / gun.ToplamCagri * 100 : 0;
+                                                            var renk = cozumOrani >= 80 ? "success" : (cozumOrani >= 60 ? "warning" : "danger");
+                                                        }
+                                                        <span class="badge bg-@renk">@Math.Round(cozumOrani, 1)%</span>
+                                                    </td>
+                                                    <td>
+                                                        @if (gun.OrtalamaCagriSuresi > 0)
+                                                        {
+                                                            <span>@Math.Round(gun.OrtalamaCagriSuresi, 1) dk</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-muted">-</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @if (gun.OrtalamaMemnuniyet > 0)
+                                                        {
+                                                            var memnuniyetRenk = gun.OrtalamaMemnuniyet >= 4 ? "success" : (gun.OrtalamaMemnuniyet >= 3 ? "warning" : "danger");
+                                                            <span class="badge bg-@memnuniyetRenk">@gun.OrtalamaMemnuniyet.ToString("F1")/5</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-muted">-</span>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="8" class="text-center text-muted">Bu tarih aralığında performans verisi bulunamadı</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Son Çağrılar -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5>Son Çağrılarım</h5>
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Müşteri</th>
+                                            <th>Konu</th>
+                                            <th>Durum</th>
+                                            <th>Tarih</th>
+                                            <th>Süre</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (ViewBag.SonCagrilar != null)
+                                        {
+                                            @foreach (var cagri in ViewBag.SonCagrilar)
+                                            {
+                                                <tr>
+                                                    <td>@cagri.Musteri?.TamAd</td>
+                                                    <td>@cagri.Konu</td>
+                                                    <td>
+                                                        @{
+                                                            var durumRenk = cagri.Durum.ToString() switch {
+                                                                "Cozumlendi" => "success",
+                                                                "Islemde" => "primary",
+                                                                "Beklemede" => "warning",
+                                                                "IptalEdildi" => "danger",
+                                                                _ => "secondary"
+                                                            };
+                                                        }
+                                                        <span class="badge bg-@durumRenk">@cagri.Durum</span>
+                                                    </td>
+                                                    <td>@cagri.OlusturulmaTarihi.ToString("dd.MM.yyyy HH:mm")</td>
+                                                    <td>
+                                                        @if (cagri.CagriSuresi.HasValue)
+                                                        {
+                                                            <span>@cagri.CagriSuresi.Value dk</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-muted">-</span>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function filtrele() {
+        const baslangic = document.getElementById('baslangic').value;
+        const bitis = document.getElementById('bitis').value;
+        
+        let url = '@Url.Action("PerformansOzeti", "Operator")';
+        const params = [];
+        
+        if (baslangic) params.push('baslangic=' + baslangic);
+        if (bitis) params.push('bitis=' + bitis);
+        
+        if (params.length > 0) {
+            url += '?' + params.join('&');
+        }
+        
+        window.location.href = url;
+    }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

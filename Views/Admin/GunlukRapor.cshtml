@@ -1,0 +1,250 @@
+@model List<CagriMerkeziUyg.Models.MusteriAktiviteler>
+@{
+    ViewData["Title"] = "Günlük Rapor";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bx bx-calendar-check me-2"></i>Günlük Aktivite Raporu
+                </h5>
+                <div>
+                    <a href="@Url.Action("ExportGunlukRapor", "Admin", new { tarih = ViewBag.SeciliTarih })" class="btn btn-success me-2">
+                        <i class="bx bx-download me-1"></i>Excel'e Aktar
+                    </a>
+                </div>
+            </div>
+            
+            <div class="card-body">
+                <!-- Tarih Filtresi -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <label for="tarihSecimi" class="form-label">Rapor Tarihi</label>
+                        <input type="date" id="tarihSecimi" class="form-control" value="@ViewBag.SeciliTarih.ToString("yyyy-MM-dd")" onchange="tarihDegistir()" />
+                    </div>
+                    <div class="col-md-8">
+                        <div class="d-flex justify-content-end align-items-end h-100">
+                            <div class="text-end">
+                                <h6 class="mb-0">@ViewBag.SeciliTarih.ToString("dd MMMM yyyy dddd", new System.Globalization.CultureInfo("tr-TR"))</h6>
+                                <small class="text-muted">Toplam @ViewBag.ToplamAktivite aktivite - @ViewBag.CozulenAktivite çözüldü</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- İstatistik Kartları -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body text-center">
+                                <h4>@ViewBag.ToplamAktivite</h4>
+                                <p class="mb-0">Toplam Aktivite</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body text-center">
+                                <h4>@ViewBag.CozulenAktivite</h4>
+                                <p class="mb-0">Çözülen</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body text-center">
+                                @{
+                                    var cozumOrani = ViewBag.ToplamAktivite > 0 ? (decimal)ViewBag.CozulenAktivite / ViewBag.ToplamAktivite * 100 : 0;
+                                }
+                                <h4>@cozumOrani.ToString("F1")%</h4>
+                                <p class="mb-0">Çözüm Oranı</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body text-center">
+                                <h4>@(ViewBag.ToplamAktivite - ViewBag.CozulenAktivite)</h4>
+                                <p class="mb-0">Bekleyen</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                @if (Model != null && Model.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Saat</th>
+                                    <th>Müşteri</th>
+                                    <th>Operatör</th>
+                                    <th>Tür</th>
+                                    <th>Durum</th>
+                                    <th>Öncelik</th>
+                                    <th>Süre</th>
+                                    <th>Memnuniyet</th>
+                                    <th>Açıklama</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var aktivite in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <small>@aktivite.OlusturulmaTarihi.ToString("HH:mm")</small>
+                                            @if (aktivite.CozumTarihi.HasValue)
+                                            {
+                                                <br />
+                                                <small class="text-success">@aktivite.CozumTarihi.Value.ToString("HH:mm")</small>
+                                            }
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <h6 class="mb-0">@aktivite.Musteri.TamAd</h6>
+                                                <small class="text-muted">@aktivite.Musteri.TelefonNo</small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            @if (aktivite.Operator != null)
+                                            {
+                                                <span class="badge bg-label-primary">@aktivite.Operator.TamAd</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-label-secondary">Atanmamış</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-label-info">@aktivite.Tur</span>
+                                        </td>
+                                        <td>
+                                            @switch (aktivite.Durum)
+                                            {
+                                                case CagriMerkeziUyg.Models.AktiviteDurumu.Yeni:
+                                                    <span class="badge bg-info">Yeni</span>
+                                                    break;
+                                                case CagriMerkeziUyg.Models.AktiviteDurumu.Islemde:
+                                                    <span class="badge bg-warning">İşlemde</span>
+                                                    break;
+                                                case CagriMerkeziUyg.Models.AktiviteDurumu.Beklemede:
+                                                    <span class="badge bg-secondary">Beklemede</span>
+                                                    break;
+                                                case CagriMerkeziUyg.Models.AktiviteDurumu.Cozumlendi:
+                                                    <span class="badge bg-success">Çözümlendi</span>
+                                                    break;
+                                                default:
+                                                    <span class="badge bg-danger">İptal</span>
+                                                    break;
+                                            }
+                                        </td>
+                                        <td>
+                                            @switch (aktivite.Oncelik)
+                                            {
+                                                case CagriMerkeziUyg.Models.AktiviteOncelik.Acil:
+                                                    <span class="badge bg-danger">Acil</span>
+                                                    break;
+                                                case CagriMerkeziUyg.Models.AktiviteOncelik.Yuksek:
+                                                    <span class="badge bg-warning">Yüksek</span>
+                                                    break;
+                                                case CagriMerkeziUyg.Models.AktiviteOncelik.Normal:
+                                                    <span class="badge bg-primary">Normal</span>
+                                                    break;
+                                                default:
+                                                    <span class="badge bg-secondary">Düşük</span>
+                                                    break;
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (aktivite.CagriSuresi.HasValue)
+                                            {
+                                                <span>@aktivite.CagriSuresi dk</span>
+                                            }
+                                            else
+                                            {
+                                                <small class="text-muted">-</small>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (aktivite.MusteriMemnuniyet.HasValue)
+                                            {
+                                                <div class="d-flex">
+                                                    @for (int i = 1; i <= 5; i++)
+                                                    {
+                                                        if (i <= aktivite.MusteriMemnuniyet.Value)
+                                                        {
+                                                            <i class="bx bxs-star text-warning"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="bx bx-star text-muted"></i>
+                                                        }
+                                                    }
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <small class="text-muted">-</small>
+                                            }
+                                        </td>
+                                        <td>
+                                            <span title="@aktivite.Aciklama">
+                                                @(aktivite.Aciklama.Length > 50 ? aktivite.Aciklama.Substring(0, 50) + "..." : aktivite.Aciklama)
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <div class="avatar avatar-xl mb-3 mx-auto">
+                            <span class="avatar-initial rounded bg-label-secondary">
+                                <i class="bx bx-calendar-x bx-lg"></i>
+                            </span>
+                        </div>
+                        <h5 class="mb-1">Bu tarihte aktivite bulunamadı</h5>
+                        <p class="text-muted">@ViewBag.SeciliTarih.ToString("dd.MM.yyyy") tarihinde hiç aktivite kaydı yoktur.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+function tarihDegistir() {
+    const tarih = document.getElementById('tarihSecimi').value;
+    window.location.href = '@Url.Action("GunlukRapor", "Admin")?tarih=' + tarih;
+}
+</script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

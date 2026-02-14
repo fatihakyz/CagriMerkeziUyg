@@ -1,0 +1,458 @@
+@{
+    ViewData["Title"] = "Şablon Yönetimi";
+}
+
+<!-- Header -->
+<div class="row">
+    <div class="col-12">
+        <div class="card bg-primary text-white mb-4">
+            <div class="card-body">
+                <h4 class="card-title text-white mb-1">
+                    <i class="bx bx-message-square-dots me-2"></i>Hızlı Yanıt Şablonları Yönetimi
+                </h4>
+                <p class="card-text mb-0">Şablonları ve kategorileri yönetin, kullanım istatistiklerini görüntüleyin</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- İstatistik Kartları -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-12 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div class="card-info">
+                        <p class="card-text">Toplam Kategori</p>
+                        <div class="d-flex align-items-end mb-2">
+                            <h4 class="card-title mb-0 me-2">@ViewBag.ToplamKategori</h4>
+                        </div>
+                    </div>
+                    <div class="card-icon">
+                        <span class="badge bg-label-primary rounded p-2">
+                            <i class="bx bx-category bx-sm"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-12 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div class="card-info">
+                        <p class="card-text">Toplam Şablon</p>
+                        <div class="d-flex align-items-end mb-2">
+                            <h4 class="card-title mb-0 me-2">@ViewBag.ToplamSablon</h4>
+                        </div>
+                    </div>
+                    <div class="card-icon">
+                        <span class="badge bg-label-success rounded p-2">
+                            <i class="bx bx-message-square rounded bx-sm"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-12 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div class="card-info">
+                        <p class="card-text">Aktif Şablon</p>
+                        <div class="d-flex align-items-end mb-2">
+                            <h4 class="card-title mb-0 me-2">@ViewBag.AktifSablon</h4>
+                        </div>
+                    </div>
+                    <div class="card-icon">
+                        <span class="badge bg-label-info rounded p-2">
+                            <i class="bx bx-check-circle bx-sm"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-12 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div class="card-info">
+                        <p class="card-text">Toplam Kullanım</p>
+                        <div class="d-flex align-items-end mb-2">
+                            <h4 class="card-title mb-0 me-2">@ViewBag.ToplamKullanim</h4>
+                        </div>
+                    </div>
+                    <div class="card-icon">
+                        <span class="badge bg-label-warning rounded p-2">
+                            <i class="bx bx-trending-up bx-sm"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tab Navigation -->
+<div class="nav-align-top mb-4">
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#kategoriler-tab" aria-controls="kategoriler-tab" aria-selected="true">
+                <i class="bx bx-category me-1"></i>Kategoriler
+            </button>
+        </li>
+        <li class="nav-item">
+            <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#sablonlar-tab" aria-controls="sablonlar-tab" aria-selected="false">
+                <i class="bx bx-message-square me-1"></i>Şablonlar
+            </button>
+        </li>
+        <li class="nav-item">
+            <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#istatistikler-tab" aria-controls="istatistikler-tab" aria-selected="false">
+                <i class="bx bx-bar-chart me-1"></i>İstatistikler
+            </button>
+        </li>
+    </ul>
+    
+    <div class="tab-content">
+        <!-- KATEGORİLER TAB -->
+        <div class="tab-pane fade show active" id="kategoriler-tab" role="tabpanel">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Kategoriler</h5>
+                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#kategoriModal" onclick="kategoriModalAc('ekle')">
+                        <i class="bx bx-plus me-1"></i>Yeni Kategori
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="kategorilerTable">
+                            <thead>
+                                <tr>
+                                    <th>Sıra</th>
+                                    <th>Kategori</th>
+                                    <th>Açıklama</th>
+                                    <th>Aktivite Türü</th>
+                                    <th>Şablon Sayısı</th>
+                                    <th>Durum</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody id="kategorilerBody">
+                                <tr>
+                                    <td colspan="7" class="text-center">
+                                        <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                            <span class="visually-hidden">Yükleniyor...</span>
+                                        </div>
+                                        Yükleniyor...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ŞABLONLAR TAB -->
+        <div class="tab-pane fade" id="sablonlar-tab" role="tabpanel">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h5 class="mb-0">Şablonlar</h5>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <div class="btn-group me-2">
+                                <select class="form-select form-select-sm" id="kategoriFiltre" onchange="sablonlariYukle()">
+                                    <option value="">Tüm Kategoriler</option>
+                                </select>
+                            </div>
+                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#sablonModal" onclick="sablonModalAc('ekle')">
+                                <i class="bx bx-plus me-1"></i>Yeni Şablon
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="sablonlarTable">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">Sıra</th>
+                                    <th>Kategori</th>
+                                    <th>Başlık</th>
+                                    <th style="width: 300px;">İçerik</th>
+                                    <th>Kısayol</th>
+                                    <th>Kullanım</th>
+                                    <th>Durum</th>
+                                    <th style="width: 150px;">İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sablonlarBody">
+                                <tr>
+                                    <td colspan="8" class="text-center">
+                                        <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                            <span class="visually-hidden">Yükleniyor...</span>
+                                        </div>
+                                        Yükleniyor...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- İSTATİSTİKLER TAB -->
+        <div class="tab-pane fade" id="istatistikler-tab" role="tabpanel">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h5 class="mb-0">Kullanım İstatistikleri</h5>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <div class="btn-group">
+                                <input type="date" class="form-control form-control-sm" id="istatistikBaslangic" onchange="istatistikleriYukle()">
+                                <input type="date" class="form-control form-control-sm" id="istatistikBitis" onchange="istatistikleriYukle()">
+                                <button type="button" class="btn btn-primary btn-sm" onclick="istatistikleriYukle()">
+                                    <i class="bx bx-refresh"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <h6>En Çok Kullanılan Şablonlar</h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Şablon</th>
+                                            <th>Kategori</th>
+                                            <th class="text-end">Kullanım</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="sablonIstatistikBody">
+                                        <tr>
+                                            <td colspan="3" class="text-center text-muted">Yükleniyor...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <h6>Kategori Bazında Kullanım</h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Kategori</th>
+                                            <th class="text-end">Kullanım</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="kategoriIstatistikBody">
+                                        <tr>
+                                            <td colspan="2" class="text-center text-muted">Yükleniyor...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <h6>Operatör Bazında Kullanım</h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Operatör</th>
+                                            <th class="text-end">Toplam Kullanım</th>
+                                            <th class="text-end">Farklı Şablon</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="operatorIstatistikBody">
+                                        <tr>
+                                            <td colspan="3" class="text-center text-muted">Yükleniyor...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Kategori Modal -->
+<div class="modal fade" id="kategoriModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="kategoriModalTitle">Yeni Kategori</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="kategoriForm">
+                    <input type="hidden" id="kategoriId">
+                    <input type="hidden" id="kategoriIslem">
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Kategori Adı <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="kategoriAd" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Açıklama</label>
+                        <textarea class="form-control" id="kategoriAciklama" rows="2"></textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Icon Class</label>
+                            <input type="text" class="form-control" id="kategoriIconClass" placeholder="bx bx-folder">
+                            <small class="text-muted">Örn: bx bx-folder</small>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Renk Kodu</label>
+                            <input type="color" class="form-control form-control-color" id="kategoriRenkKodu" value="#007bff">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Sıra</label>
+                            <input type="number" class="form-control" id="kategoriSira" value="1" min="1">
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Aktivite Türü</label>
+                            <select class="form-select" id="kategoriAktiviteTuru">
+                                <option value="">Tümü</option>
+                                <option value="0">Telefon</option>
+                                <option value="1">Email</option>
+                                <option value="2">Şikayet</option>
+                                <option value="3">Talep</option>
+                                <option value="4">Diğer</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="kategoriAktif" checked>
+                        <label class="form-check-label" for="kategoriAktif">
+                            Aktif
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary" onclick="kategoriKaydet()">
+                    <i class="bx bx-save me-1"></i>Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Şablon Modal -->
+<div class="modal fade" id="sablonModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sablonModalTitle">Yeni Şablon</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="sablonForm">
+                    <input type="hidden" id="sablonId">
+                    <input type="hidden" id="sablonIslem">
+                    
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label">Başlık <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="sablonBaslik" required>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Kategori <span class="text-danger">*</span></label>
+                            <select class="form-select" id="sablonKategoriId" required>
+                                <option value="">Seçiniz...</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">İçerik <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="sablonIcerik" rows="5" required></textarea>
+                        <small class="text-muted">
+                            Değişkenler için {} kullanın. Örn: {MusteriAdi}, {OperatorAdi}
+                        </small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Notlar</label>
+                        <textarea class="form-control" id="sablonNotlar" rows="2"></textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Sıra</label>
+                            <input type="number" class="form-control" id="sablonSira" value="1" min="1">
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Kısayol (Opsiyonel)</label>
+                            <input type="text" class="form-control" id="sablonKisaYol" maxlength="20" placeholder="Örn: CTRL+1">
+                        </div>
+                        
+                        <div class="col-md-4 mb-3 d-flex align-items-end">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="sablonAktif" checked>
+                                <label class="form-check-label" for="sablonAktif">
+                                    Aktif
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary" onclick="sablonKaydet()">
+                    <i class="bx bx-save me-1"></i>Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin-sablon-yonetimi.js"></script>
+}
+
+
+
+
+
+
+
+
+
+
+
+

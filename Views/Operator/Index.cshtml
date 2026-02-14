@@ -1,0 +1,647 @@
+@model List<CagriMerkeziUyg.Models.MusteriAktiviteler>
+@{
+    ViewData["Title"] = "Operatör Dashboard";
+}
+
+<!-- Operatör Dashboard Header -->
+<div class="row">
+    <div class="col-lg-8 col-12">
+        <div class="card bg-success text-white mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="card-title text-white mb-1">
+                            <i class="bx bx-user-circle me-2"></i>Hoş Geldiniz, @ViewBag.OperatorAdi
+                        </h4>
+                        <p class="card-text">Operatör Paneli - @DateTime.Now.ToString("dd MMMM yyyy dddd", new System.Globalization.CultureInfo("tr-TR"))</p>
+                    </div>
+                    <div class="text-end">
+                        <h2 class="text-white">@DateTime.Now.ToString("HH:mm")</h2>
+                        <small>Vardiya Saati</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- DURUM YÖNETİMİ WİDGET'I -->
+    <div class="col-lg-4 col-12">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h6 class="card-title mb-3">
+                    <i class="bx bx-radio-circle-marked me-1"></i>Durumum
+                </h6>
+                
+                <!-- Mevcut Durum Gösterimi -->
+                <div class="text-center mb-3">
+                    <div class="durum-badge-wrapper">
+                        <span class="durum-badge badge-lg" id="mevcutDurumBadge">
+                            <i class="bx bx-loader bx-spin me-1"></i>
+                            <span id="mevcutDurumMetni">Yükleniyor...</span>
+                        </span>
+                    </div>
+                    <small class="text-muted d-block mt-2">
+                        <i class="bx bx-time-five me-1"></i>
+                        <span id="durumSuresi">--:--</span> süredir
+                    </small>
+                </div>
+                
+                <!-- Hızlı Durum Değiştirme Dropdown -->
+                <div class="dropdown">
+                    <button class="btn btn-outline-primary btn-sm w-100 dropdown-toggle" type="button" id="durumDegistirDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bx bx-edit me-1"></i>Durumu Değiştir
+                    </button>
+                    <ul class="dropdown-menu w-100" aria-labelledby="durumDegistirDropdown">
+                        <li>
+                            <a class="dropdown-item durum-item" href="#" data-durum="Musait">
+                                <i class="bx bx-check-circle text-success me-2"></i>Müsait
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item durum-item" href="#" data-durum="Mola">
+                                <i class="bx bx-coffee text-info me-2"></i>Mola
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item durum-item" href="#" data-durum="OgleYemegi">
+                                <i class="bx bx-food-menu text-info me-2"></i>Öğle Yemeği
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item durum-item" href="#" data-durum="Toplantida">
+                                <i class="bx bx-group text-secondary me-2"></i>Toplantıda
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item durum-item" href="#" data-durum="Egitimde">
+                                <i class="bx bx-book text-primary me-2"></i>Eğitimde
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item durum-item" href="#" data-durum="Uzakta">
+                                <i class="bx bx-time text-secondary me-2"></i>Uzakta
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item durum-item" href="#" data-durum="Mesgul">
+                                <i class="bx bx-minus-circle text-warning me-2"></i>Meşgul
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Günlük İstatistikler -->
+<div class="row">
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-12 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div class="card-info">
+                        <p class="card-text">Bugünkü Çağrı</p>
+                        <div class="d-flex align-items-end mb-2">
+                            <h4 class="card-title mb-0 me-2">@ViewBag.BugunkuToplamCagri</h4>
+                        </div>
+                    </div>
+                    <div class="card-icon">
+                        <span class="badge bg-label-primary rounded p-2">
+                            <i class="bx bx-phone bx-sm"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-12 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div class="card-info">
+                        <p class="card-text">Çözülen Çağrı</p>
+                        <div class="d-flex align-items-end mb-2">
+                            <h4 class="card-title mb-0 me-2">@ViewBag.BugunkuCozulen</h4>
+                        </div>
+                    </div>
+                    <div class="card-icon">
+                        <span class="badge bg-label-success rounded p-2">
+                            <i class="bx bx-check-circle bx-sm"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-12 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div class="card-info">
+                        <p class="card-text">Bekleyen Çağrı</p>
+                        <div class="d-flex align-items-end mb-2">
+                            <h4 class="card-title mb-0 me-2">@ViewBag.BekleyenCagriSayisi</h4>
+                        </div>
+                    </div>
+                    <div class="card-icon">
+                        <span class="badge bg-label-warning rounded p-2">
+                            <i class="bx bx-time bx-sm"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-12 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div class="card-info">
+                        <p class="card-text">Ortalama Memnuniyet</p>
+                        <div class="d-flex align-items-end mb-2">
+                            <h4 class="card-title mb-0 me-2">@ViewBag.OrtalamaMemnuniyet.ToString("F1")</h4>
+                            <small class="text-muted">/5</small>
+                        </div>
+                    </div>
+                    <div class="card-icon">
+                        <span class="badge bg-label-info rounded p-2">
+                            <i class="bx bx-star bx-sm"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hızlı İşlemler -->
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bx bx-zap me-1"></i>Hızlı İşlemler
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <a href="@Url.Action("YeniCagri", "Operator")" class="card border-0 shadow-sm h-100 text-decoration-none">
+                            <div class="card-body text-center">
+                                <div class="avatar avatar-lg mb-3">
+                                    <span class="avatar-initial rounded bg-label-success">
+                                        <i class="bx bx-plus bx-lg"></i>
+                                    </span>
+                                </div>
+                                <h6 class="mb-1">Yeni Çağrı</h6>
+                                <small class="text-muted">Çağrı oluştur</small>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="col-6">
+                        <a href="@Url.Action("CagriListesi", "Operator")" class="card border-0 shadow-sm h-100 text-decoration-none">
+                            <div class="card-body text-center">
+                                <div class="avatar avatar-lg mb-3">
+                                    <span class="avatar-initial rounded bg-label-primary">
+                                        <i class="bx bx-list-ul bx-lg"></i>
+                                    </span>
+                                </div>
+                                <h6 class="mb-1">Çağrı Listesi</h6>
+                                <small class="text-muted">Tüm çağrıları gör</small>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="col-6">
+                        <a href="@Url.Action("Ara", "Musteri")" class="card border-0 shadow-sm h-100 text-decoration-none">
+                            <div class="card-body text-center">
+                                <div class="avatar avatar-lg mb-3">
+                                    <span class="avatar-initial rounded bg-label-info">
+                                        <i class="bx bx-search bx-lg"></i>
+                                    </span>
+                                </div>
+                                <h6 class="mb-1">Müşteri Ara</h6>
+                                <small class="text-muted">Müşteri bul</small>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="col-6">
+                        <a href="@Url.Action("PerformansOzeti", "Operator")" class="card border-0 shadow-sm h-100 text-decoration-none">
+                            <div class="card-body text-center">
+                                <div class="avatar avatar-lg mb-3">
+                                    <span class="avatar-initial rounded bg-label-warning">
+                                        <i class="bx bx-line-chart bx-lg"></i>
+                                    </span>
+                                </div>
+                                <h6 class="mb-1">Performansım</h6>
+                                <small class="text-muted">İstatistiklerim</small>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bekleyen Çağrılar -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bx bx-time me-1"></i>Acil Bekleyen Çağrılar
+                </h5>
+                <a href="@Url.Action("CagriListesi", "Operator", new { durum = "Yeni" })" class="btn btn-sm btn-outline-primary">
+                    Tümünü Gör
+                </a>
+            </div>
+            <div class="card-body">
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var aktivite in Model.Take(5))
+                    {
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="flex-shrink-0">
+                                <div class="avatar avatar-sm">
+                                    <span class="avatar-initial rounded 
+                                        @(aktivite.Oncelik == CagriMerkeziUyg.Models.AktiviteOncelik.Acil ? "bg-danger" : 
+                                          aktivite.Oncelik == CagriMerkeziUyg.Models.AktiviteOncelik.Yuksek ? "bg-warning" : "bg-primary")">
+                                        <i class="bx bx-phone"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1">@aktivite.Musteri.TamAd</h6>
+                                <p class="mb-0 text-muted small">@aktivite.Tur - @aktivite.OlusturulmaTarihi.ToString("HH:mm")</p>
+                                
+                                <!-- Müşteri Tipi -->
+                                @if (aktivite.Musteri.MusteriTipi.HasValue)
+                                {
+                                    <span class="badge bg-primary me-1">@aktivite.Musteri.MusteriTipi.Value</span>
+                                }
+                                
+                                <!-- Etiketler -->
+                                @if (aktivite.Musteri.EtiketAtamalari != null && aktivite.Musteri.EtiketAtamalari.Any())
+                                {
+                                    @foreach (var etiket in aktivite.Musteri.EtiketAtamalari.Take(2))
+                                    {
+                                        <span class="badge me-1" style="background-color: @etiket.MusteriEtiketi.RenkKodu; color: white; font-size: 0.7rem;">
+                                            @etiket.MusteriEtiketi.Ad
+                                        </span>
+                                    }
+                                    @if (aktivite.Musteri.EtiketAtamalari.Count > 2)
+                                    {
+                                        <span class="badge bg-secondary" style="font-size: 0.7rem;">
+                                            +@(aktivite.Musteri.EtiketAtamalari.Count - 2)
+                                        </span>
+                                    }
+                                }
+                            </div>
+                            <div class="flex-shrink-0">
+                                <a href="@Url.Action("CagriDetay", "Operator", new { id = aktivite.Id })" class="btn btn-sm btn-outline-primary">
+                                    <i class="bx bx-right-arrow-alt"></i>
+                                </a>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center text-muted py-3">
+                        <i class="bx bx-check-circle bx-lg mb-2"></i>
+                        <p class="mb-0">Harika! Bekleyen çağrınız yok.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Çağrı Yönetimi Floating Button -->
+<button type="button" class="btn btn-success btn-floating" id="btnCagriYonetimi" title="Çağrı Yönetimi">
+    <i class="bx bx-phone-call bx-md"></i>
+</button>
+
+<!--  Çağrı Yönetimi Yan Paneli -->
+<div class="side-panel" id="cagriYonetimiPanel">
+    <!-- CLOSE BUTTON - HEADER DIŞINDA, MUTLAK POZİSYONDA -->
+    <button type="button" class="btn-close side-panel-close-btn" id="btnPanelKapat" title="Paneli Kapat"></button>
+    
+    <div class="side-panel-header">
+        <div class="drag-handle" title="Paneli taşımak için tutun">
+            <i class="bx bx-grid-vertical"></i>
+        </div>
+        <h5 class="mb-0">
+            <i class="bx bx-phone-incoming me-2"></i>Çağrı Yönetimi
+        </h5>
+    </div>
+    
+    <div class="side-panel-body">
+        <!-- Telefon Numarası Kontrol -->
+        <div class="card mb-3">
+            <div class="card-body">
+                <h6 class="card-title mb-3">
+                    <i class="bx bx-phone me-1"></i>Gelen Çağrı
+                </h6>
+                
+                <div class="mb-3">
+                    <label class="form-label">Telefon Numarası</label>
+                    <input type="text" class="form-control" id="telefonNoInput" placeholder="5XX XXX XX XX" maxlength="15">
+                    <small class="text-muted">Numara girerken otomatik kontrol edilir</small>
+                </div>
+                
+                <button type="button" class="btn btn-primary w-100" id="btnMusteriKontrol">
+                    <i class="bx bx-search me-1"></i>Müşteri Kontrol Et
+                </button>
+            </div>
+        </div>
+        
+        <!-- Müşteri Bilgisi Bölümü (dinamik) -->
+        <div id="musteriBilgiAlani"></div>
+        
+        <!-- Hızlı İşlemler -->
+        <div class="card mb-3" id="hizliIslemlerCard" style="display: none;">
+            <div class="card-body">
+                <h6 class="card-title mb-3">
+                    <i class="bx bx-user-plus me-1"></i>Hızlı İşlemler
+                </h6>
+                
+                <button type="button" class="btn btn-outline-success w-100 mb-2" id="btnHizliKayit">
+                    <i class="bx bx-user-plus me-1"></i>Hızlı Müşteri Kaydı
+                </button>
+                
+                <button type="button" class="btn btn-outline-secondary w-100" id="btnGeciciKayit">
+                    <i class="bx bx-user-x me-1"></i>Geçici Kayıt (Anonim)
+                </button>
+            </div>
+        </div>
+        
+        <!-- Çağrı Kontrolü -->
+        <div class="card mb-3" id="cagriKontrolCard" style="display: none;">
+            <div class="card-body">
+                <h6 class="card-title mb-3">
+                    <i class="bx bx-timer me-1"></i>Çağrı Kontrolü
+                </h6>
+                
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-muted">Çağrı Durumu:</span>
+                    <span class="badge bg-success" id="cagriDurumBadge">Devam Ediyor</span>
+                </div>
+                
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-muted">Süre:</span>
+                    <strong id="cagriSuresi">00:00</strong>
+                </div>
+                
+                <button type="button" class="btn btn-danger w-100" id="btnCagriBitir">
+                    <i class="bx bx-phone-off me-1"></i>Çağrıyı Sonlandır
+                </button>
+            </div>
+        </div>
+        
+        <!-- Hızlı Yanıt Şablonları Butonu -->
+        <div class="card">
+            <div class="card-body">
+                <button type="button" class="btn btn-outline-primary w-100" id="btnSablonlariAc">
+                    <i class="bx bx-message-square-dots me-1"></i>Hızlı Yanıt Şablonları
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- : Hızlı Yanıt Şablonları Paneli -->
+<div class="side-panel side-panel-wide" id="sablonlarPanel">
+    <!-- CLOSE BUTTON - HEADER DIŞINDA, MUTLAK POZİSYONDA -->
+    <button type="button" class="btn-close side-panel-close-btn" id="btnSablonPanelKapat" title="Paneli Kapat"></button>
+    
+    <div class="side-panel-header">
+        <div class="drag-handle" title="Paneli taşımak için tutun">
+            <i class="bx bx-grid-vertical"></i>
+        </div>
+        <h5 class="mb-0">
+            <i class="bx bx-message-square-dots me-2"></i>Hızlı Yanıt Şablonları
+        </h5>
+    </div>
+    
+    <div class="side-panel-body">
+        <!-- Popüler Şablonlar -->
+        <div class="mb-4">
+            <h6 class="mb-3">
+                <i class="bx bx-star me-1"></i>Popüler Şablonlar
+            </h6>
+            <div id="populerSablonlarAlani">
+                <div class="text-center text-muted py-3">
+                    <div class="spinner-border spinner-border-sm" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Kategoriler -->
+        <div>
+            <h6 class="mb-3">
+                <i class="bx bx-category me-1"></i>Kategoriler
+            </h6>
+            <div id="kategorilerAlani">
+                <div class="text-center text-muted py-3">
+                    <div class="spinner-border spinner-border-sm" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Şablonlar Listesi (Kategori seçildiğinde görünür) -->
+        <div id="sablonlarListesi" style="display: none;">
+            <hr>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="mb-0" id="secilenKategoriBaslik"></h6>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="btnKategoriyeDon">
+                    <i class="bx bx-arrow-back"></i> Geri
+                </button>
+            </div>
+            <div id="sablonlarAlani"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Hızlı Kayıt Modal -->
+<div class="modal fade" id="hizliKayitModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bx bx-user-plus me-2"></i>Hızlı Müşteri Kaydı
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="hizliKayitForm">
+                    <input type="hidden" id="hizliKayitTelefon">
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Ad <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="hizliKayitAd" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Soyad <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="hizliKayitSoyad" required>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="bx bx-info-circle me-1"></i>
+                        <small>Diğer bilgiler çağrı sonrası tamamlanabilir.</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-success" id="btnHizliKayitKaydet">
+                    <i class="bx bx-save me-1"></i>Kaydet ve Devam Et
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Çağrı Sonlandırma Modal -->
+<div class="modal fade" id="cagriBitirModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bx bx-phone-off me-2"></i>Çağrıyı Sonlandır
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="cagriBitirForm">
+                    <input type="hidden" id="aramaLogId">
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Çağrı Durumu</label>
+                        <select class="form-select" id="cagriBitirDurum">
+                            <option value="2">Tamamlandı</option>
+                            <option value="3">Cevapsız</option>
+                            <option value="4">Meşgul</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Müşteri Memnuniyeti</label>
+                        <select class="form-select" id="cagriBitirMemnuniyet">
+                            <option value="">Belirtilmedi</option>
+                            <option value="5">⭐⭐⭐⭐⭐ Çok Memnun</option>
+                            <option value="4">⭐⭐⭐⭐ Memnun</option>
+                            <option value="3">⭐⭐⭐ Orta</option>
+                            <option value="2">⭐⭐ Az Memnun</option>
+                            <option value="1">⭐ Memnun Değil</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Notlar</label>
+                        <textarea class="form-control" id="cagriBitirNotlar" rows="3" placeholder="Çağrı ile ilgili notlar..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-danger" id="btnCagriBitirKaydet">
+                    <i class="bx bx-phone-off me-1"></i>Çağrıyı Sonlandır
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Şablon Detay Modal -->
+<div class="modal fade" id="sablonDetayModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sablonDetayBaslik">
+                    <i class="bx bx-message-square-detail me-2"></i>Şablon Detayı
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Kategori</label>
+                    <div>
+                        <span class="badge" id="sablonDetayKategori" style="font-size: 0.9rem;"></span>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold">İçerik</label>
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <p id="sablonDetayIcerik" style="white-space: pre-wrap; margin-bottom: 0;"></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3" id="sablonDetayNotlarDiv" style="display: none;">
+                    <label class="form-label fw-bold">Notlar</label>
+                    <div class="alert alert-info mb-0">
+                        <i class="bx bx-info-circle me-1"></i>
+                        <span id="sablonDetayNotlar"></span>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6" id="sablonDetayKisaYolDiv" style="display: none;">
+                        <label class="form-label fw-bold">Kısayol</label>
+                        <div>
+                            <span class="badge bg-primary" id="sablonDetayKisaYol" style="font-size: 0.85rem;"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Kullanım Sayısı</label>
+                        <div>
+                            <span class="badge bg-success" id="sablonDetayKullanim" style="font-size: 0.85rem;">0 kez</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/cagri-yonetimi.js"></script>
+    <script src="~/js/operator-durum.js"></script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/cagri-yonetimi.css">
+    <link rel="stylesheet" href="~/css/operator-durum.css">
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

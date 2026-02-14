@@ -1,0 +1,286 @@
+@model CagriMerkeziUyg.Models.Musteri
+@{
+    ViewData["Title"] = "Etiket Yönetimi";
+}
+
+<!-- Header -->
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bx bx-tag me-1"></i>Etiket Yönetimi - @Model.TamAd
+                </h5>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb breadcrumb-style1 mb-0">
+                        <li class="breadcrumb-item">
+                            <a href="@Url.Action("Ara")">Müşteri Ara</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="@Url.Action("Detay", new { id = Model.Id })">@Model.TamAd</a>
+                        </li>
+                        <li class="breadcrumb-item active">Etiket Yönetimi</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Mevcut Etiketler -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bx bx-check-circle me-1"></i>Mevcut Etiketler
+                </h5>
+            </div>
+            <div class="card-body">
+                @if (ViewBag.MevcutEtiketler != null && ((List<CagriMerkeziUyg.Models.MusteriEtiketi>)ViewBag.MevcutEtiketler).Any())
+                {
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach (var etiket in (List<CagriMerkeziUyg.Models.MusteriEtiketi>)ViewBag.MevcutEtiketler)
+                        {
+                            <div class="d-flex align-items-center">
+                                <span class="badge me-2" style="background-color: @etiket.RenkKodu; color: white;">
+                                    @etiket.Ad
+                                </span>
+                                <form asp-action="EtiketKaldir" method="post" class="d-inline">
+                                    <input type="hidden" name="musteriId" value="@Model.Id" />
+                                    <input type="hidden" name="etiketId" value="@etiket.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                            onclick="return confirm('Bu etiketi kaldırmak istediğinizden emin misiniz?')">
+                                        <i class="bx bx-x"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <i class="bx bx-tag display-4 text-muted"></i>
+                        <p class="text-muted mt-2">Henüz etiket atanmamış</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Kullanılabilir Etiketler -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bx bx-plus-circle me-1"></i>Etiket Ekle
+                </h5>
+            </div>
+            <div class="card-body">
+                @if (ViewBag.KullanilabilirEtiketler != null && ((List<CagriMerkeziUyg.Models.MusteriEtiketi>)ViewBag.KullanilabilirEtiketler).Any())
+                {
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach (var etiket in (List<CagriMerkeziUyg.Models.MusteriEtiketi>)ViewBag.KullanilabilirEtiketler)
+                        {
+                            <div class="d-flex align-items-center">
+                                <span class="badge me-2" style="background-color: @etiket.RenkKodu; color: white;">
+                                    @etiket.Ad
+                                </span>
+                                <form asp-action="EtiketEkle" method="post" class="d-inline">
+                                    <input type="hidden" name="musteriId" value="@Model.Id" />
+                                    <input type="hidden" name="etiketId" value="@etiket.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-success">
+                                        <i class="bx bx-plus"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <i class="bx bx-check-circle display-4 text-success"></i>
+                        <p class="text-muted mt-2">Tüm etiketler atanmış</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Etiket Oluştur -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bx bx-plus me-1"></i>Yeni Etiket Oluştur
+                </h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="EtiketOlustur" method="post">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Etiket Adı</label>
+                            <input type="text" name="Ad" class="form-control" placeholder="Örn: Özel Müşteri" required />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Açıklama</label>
+                            <input type="text" name="Aciklama" class="form-control" placeholder="Etiket açıklaması" />
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Renk Kodu</label>
+                            <input type="color" name="RenkKodu" class="form-control form-control-color" value="#007bff" />
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bx bx-plus me-1"></i>Etiket Oluştur
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Etiket Listesi -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bx bx-list-ul me-1"></i>Tüm Etiketler
+                </h5>
+                <a href="@Url.Action("EtiketListesi")" class="btn btn-outline-primary btn-sm">
+                    <i class="bx bx-cog me-1"></i>Etiketleri Yönet
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Etiket</th>
+                                <th>Açıklama</th>
+                                <th>Renk</th>
+                                <th>Durum</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                var tumEtiketler = new List<CagriMerkeziUyg.Models.MusteriEtiketi>();
+                                if (ViewBag.KullanilabilirEtiketler != null)
+                                    tumEtiketler.AddRange((List<CagriMerkeziUyg.Models.MusteriEtiketi>)ViewBag.KullanilabilirEtiketler);
+                                if (ViewBag.MevcutEtiketler != null)
+                                    tumEtiketler.AddRange((List<CagriMerkeziUyg.Models.MusteriEtiketi>)ViewBag.MevcutEtiketler);
+                                tumEtiketler = tumEtiketler.OrderBy(e => e.Ad).ToList();
+                            }
+                            @foreach (var etiket in tumEtiketler)
+                            {
+                                <tr>
+                                    <td>
+                                        <span class="badge" style="background-color: @etiket.RenkKodu; color: white;">
+                                            @etiket.Ad
+                                        </span>
+                                    </td>
+                                    <td>@etiket.Aciklama</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="color-preview me-2" style="width: 20px; height: 20px; background-color: @etiket.RenkKodu; border-radius: 3px;"></div>
+                                            <small class="text-muted">@etiket.RenkKodu</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if (etiket.Aktif)
+                                        {
+                                            <span class="badge bg-success">Aktif</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Pasif</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (((List<CagriMerkeziUyg.Models.MusteriEtiketi>)ViewBag.MevcutEtiketler).Any(e => e.Id == etiket.Id))
+                                        {
+                                            <form asp-action="EtiketKaldir" method="post" class="d-inline">
+                                                <input type="hidden" name="musteriId" value="@Model.Id" />
+                                                <input type="hidden" name="etiketId" value="@etiket.Id" />
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                        onclick="return confirm('Bu etiketi kaldırmak istediğinizden emin misiniz?')">
+                                                    <i class="bx bx-x"></i> Kaldır
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <form asp-action="EtiketEkle" method="post" class="d-inline">
+                                                <input type="hidden" name="musteriId" value="@Model.Id" />
+                                                <input type="hidden" name="etiketId" value="@etiket.Id" />
+                                                <button type="submit" class="btn btn-sm btn-outline-success">
+                                                    <i class="bx bx-plus"></i> Ekle
+                                                </button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Geri Dön Butonu -->
+<div class="row mt-4">
+    <div class="col-12">
+        <a href="@Url.Action("Detay", new { id = Model.Id })" class="btn btn-outline-secondary">
+            <i class="bx bx-arrow-back me-1"></i>Müşteri Detayına Dön
+        </a>
+    </div>
+</div>
+
+<!-- Toast Messages -->
+@if (TempData["Success"] != null)
+{
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050">
+        <div class="toast show" role="alert">
+            <div class="toast-header text-success">
+                <i class="bx bx-check-circle me-2"></i>
+                <strong class="me-auto">Başarılı</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body">
+                @TempData["Success"]
+            </div>
+        </div>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050">
+        <div class="toast show" role="alert">
+            <div class="toast-header text-danger">
+                <i class="bx bx-x-circle me-2"></i>
+                <strong class="me-auto">Hata</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body">
+                @TempData["Error"]
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        setTimeout(function() {
+            $('.toast').fadeOut();
+        }, 5000);
+    </script>
+}

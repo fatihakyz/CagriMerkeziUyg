@@ -1,0 +1,257 @@
+@{
+    ViewData["Title"] = "Yeni Çağrı";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">📞 Yeni Çağrı Kaydı</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="YeniCagri" method="post">
+                        <div class="row">
+                            <!-- Müşteri Seçimi -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="musteriArama" class="form-label">Müşteri Ara</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="musteriArama" 
+                                               placeholder="Müşteri adı veya telefon numarası ile ara..." 
+                                               autocomplete="off">
+                                        <button type="button" class="btn btn-outline-secondary" onclick="musteriAra()">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                    <div id="musteriSonuclari" class="list-group mt-2" style="display: none;"></div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Seçilen Müşteri</label>
+                                    <div id="secilenMusteri" class="card" style="display: none;">
+                                        <div class="card-body py-2">
+                                            <div id="musteriInfo">
+                                                <strong id="musteriAd"></strong><br>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-phone"></i> <span id="musteriTelefon"></span> |
+                                                    <i class="fas fa-envelope"></i> <span id="musteriEmail"></span>
+                                                </small>
+                                                <div id="musteriEtiketler" class="mt-2"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="musteriId" name="musteriId" required />
+                                </div>
+                            </div>
+
+                            <!-- Çağrı Detayları -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="tur" class="form-label">Aktivite Türü *</label>
+                                    <select class="form-select" id="tur" name="tur" required>
+                                        <option value="">Seçiniz...</option>
+                                        <option value="0">Şikayet</option>
+                                        <option value="1">Talep</option>
+                                        <option value="2">Bilgi</option>
+                                        <option value="3">Öneri</option>
+                                        <option value="4">Diğer</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="oncelik" class="form-label">Öncelik *</label>
+                                    <select class="form-select" id="oncelik" name="oncelik" required>
+                                        <option value="1">Düşük</option>
+                                        <option value="2" selected>Normal</option>
+                                        <option value="3">Yüksek</option>
+                                        <option value="4">Acil</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="konu" class="form-label">Konu *</label>
+                                    <input type="text" class="form-control" id="konu" name="konu" 
+                                           placeholder="Çağrı konusu..." maxlength="200" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label for="aciklama" class="form-label">Açıklama *</label>
+                                    <textarea class="form-control" id="aciklama" name="aciklama" rows="5" 
+                                              placeholder="Çağrı detayları ve müşteri talebi..." maxlength="1000" required></textarea>
+                                    <div class="form-text">Kalan karakter: <span id="kalanKarakter">1000</span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Çağrı Kaydı Oluştur
+                                    </button>
+                                    <a href="@Url.Action("CagriListesi", "Operator")" class="btn btn-secondary">
+                                        <i class="fas fa-times"></i> İptal
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Karakter sayacı
+    document.getElementById('aciklama').addEventListener('input', function() {
+        const maxLength = 1000;
+        const currentLength = this.value.length;
+        const remaining = maxLength - currentLength;
+        document.getElementById('kalanKarakter').textContent = remaining;
+        
+        if (remaining < 50) {
+            document.getElementById('kalanKarakter').className = 'text-warning';
+        } else if (remaining < 20) {
+            document.getElementById('kalanKarakter').className = 'text-danger';
+        } else {
+            document.getElementById('kalanKarakter').className = '';
+        }
+    });
+
+    // Müşteri arama
+    let aramaTimeout;
+    
+    document.getElementById('musteriArama').addEventListener('input', function() {
+        clearTimeout(aramaTimeout);
+        const query = this.value.trim();
+        
+        if (query.length >= 2) {
+            aramaTimeout = setTimeout(() => musteriAra(), 300);
+        } else {
+            document.getElementById('musteriSonuclari').style.display = 'none';
+        }
+    });
+
+    function musteriAra() {
+        const query = document.getElementById('musteriArama').value.trim();
+        
+        if (query.length < 2) {
+            return;
+        }
+
+        fetch(`@Url.Action("MusteriAra", "Operator")?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                const sonuclar = document.getElementById('musteriSonuclari');
+                sonuclar.innerHTML = '';
+                
+                if (data.length > 0) {
+                    data.forEach(musteri => {
+                        const item = document.createElement('a');
+                        item.href = '#';
+                        item.className = 'list-group-item list-group-item-action';
+                        item.onclick = (e) => {
+                            e.preventDefault();
+                            musteriSec(musteri);
+                        };
+                        
+                        // Etiket HTML'ini oluştur
+                        let etiketHtml = '';
+                        if (musteri.etiketler && musteri.etiketler.length > 0) {
+                            etiketHtml = '<div class="mt-1">';
+                            musteri.etiketler.slice(0, 3).forEach(etiket => {
+                                etiketHtml += `<span class="badge me-1" style="background-color: ${etiket.renk}; color: white; font-size: 0.7rem;">${etiket.ad}</span>`;
+                            });
+                            if (musteri.etiketler.length > 3) {
+                                etiketHtml += `<span class="badge bg-secondary" style="font-size: 0.7rem;">+${musteri.etiketler.length - 3}</span>`;
+                            }
+                            etiketHtml += '</div>';
+                        }
+                        
+                        // Müşteri tipi HTML'ini oluştur
+                        let tipHtml = '';
+                        if (musteri.musteriTipi) {
+                            tipHtml = `<span class="badge bg-primary me-1" style="font-size: 0.7rem;">${musteri.musteriTipi}</span>`;
+                        }
+                        
+                        item.innerHTML = `
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">${musteri.text}</h6>
+                                <small class="text-muted">${musteri.telefon || musteri.telefonNo}</small>
+                            </div>
+                            <small class="text-muted">${musteri.email || 'Email yok'}</small>
+                            ${tipHtml}
+                            ${etiketHtml}
+                        `;
+                        
+                        sonuclar.appendChild(item);
+                    });
+                    sonuclar.style.display = 'block';
+                } else {
+                    sonuclar.innerHTML = '<div class="list-group-item">Müşteri bulunamadı</div>';
+                    sonuclar.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Arama hatası:', error);
+                document.getElementById('musteriSonuclari').style.display = 'none';
+            });
+    }
+
+    function musteriSec(musteri) {
+        // Müşteri bilgilerini doldur
+        document.getElementById('musteriId').value = musteri.id;
+        document.getElementById('musteriAd').textContent = musteri.text;
+        document.getElementById('musteriTelefon').textContent = musteri.telefon || musteri.telefonNo;
+        document.getElementById('musteriEmail').textContent = musteri.email || 'Email yok';
+        
+        // Etiketleri göster
+        const etiketContainer = document.getElementById('musteriEtiketler');
+        etiketContainer.innerHTML = '';
+        
+        if (musteri.musteriTipi) {
+            const tipBadge = document.createElement('span');
+            tipBadge.className = 'badge bg-primary me-1';
+            tipBadge.textContent = musteri.musteriTipi;
+            etiketContainer.appendChild(tipBadge);
+        }
+        
+        if (musteri.etiketler && musteri.etiketler.length > 0) {
+            musteri.etiketler.forEach(etiket => {
+                const etiketBadge = document.createElement('span');
+                etiketBadge.className = 'badge me-1';
+                etiketBadge.style.backgroundColor = etiket.renk;
+                etiketBadge.style.color = 'white';
+                etiketBadge.textContent = etiket.ad;
+                etiketContainer.appendChild(etiketBadge);
+            });
+        }
+        
+        // Seçilen müşteriyi göster
+        document.getElementById('secilenMusteri').style.display = 'block';
+        document.getElementById('musteriSonuclari').style.display = 'none';
+        document.getElementById('musteriArama').value = '';
+    }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

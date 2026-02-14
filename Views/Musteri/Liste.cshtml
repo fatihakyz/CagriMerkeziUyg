@@ -1,0 +1,334 @@
+@model List<CagriMerkeziUyg.Models.Musteri>
+@{
+    ViewData["Title"] = "Müşteri Listesi";
+}
+
+<!-- Header -->
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bx bx-list-ul me-1"></i>Müşteri Listesi
+                    <span class="badge bg-primary ms-2">@Model.Count</span>
+                </h5>
+                <div>
+                    <a href="@Url.Action("YeniKayit")" class="btn btn-primary btn-sm">
+                        <i class="bx bx-user-plus me-1"></i>Yeni Müşteri
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Arama ve Filtreler -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-8">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bx bx-search"></i></span>
+                            <input type="text" 
+                                   class="form-control" 
+                                   name="arama" 
+                                   value="@ViewBag.Arama" 
+                                   placeholder="Ad, soyad, telefon veya e-posta ile ara..." />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bx bx-search me-1"></i>Ara
+                            </button>
+                            @if (!string.IsNullOrEmpty(ViewBag.Arama))
+                            {
+                                <a href="@Url.Action("Liste")" class="btn btn-outline-secondary">
+                                    <i class="bx bx-x me-1"></i>Temizle
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Müşteri Listesi -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">
+                    @if (!string.IsNullOrEmpty(ViewBag.Arama))
+                    {
+                        <span>"@ViewBag.Arama" için @Model.Count sonuç</span>
+                    }
+                    else
+                    {
+                        <span>Toplam @Model.Count müşteri</span>
+                    }
+                </h6>
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="bx bx-dots-vertical-rounded"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#"><i class="bx bx-export me-2"></i>Excel'e Aktar</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="bx bx-printer me-2"></i>Yazdır</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="table-responsive">
+                @if (Model.Any())
+                {
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Müşteri</th>
+                                <th>Telefon</th>
+                                <th>E-posta</th>
+                                <th>Yaş</th>
+                                <th>Kayıt Tarihi</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var musteri in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar avatar-sm me-3">
+                                                <span class="avatar-initial rounded-circle bg-label-primary">
+                                                    @musteri.Ad.Substring(0, 1).ToUpper()
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0">@musteri.TamAd</h6>
+                                                @if (!string.IsNullOrEmpty(musteri.Notlar))
+                                                {
+                                                    <small class="text-muted">
+                                                        @(musteri.Notlar.Length > 30 ? musteri.Notlar.Substring(0, 30) + "..." : musteri.Notlar)
+                                                    </small>
+                                                }
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a href="tel:@musteri.TelefonNo" class="text-decoration-none">
+                                            <i class="bx bx-phone me-1"></i>@musteri.TelefonNo
+                                        </a>
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(musteri.Email))
+                                        {
+                                            <a href="mailto:@musteri.Email" class="text-decoration-none">
+                                                @musteri.Email
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (musteri.Yas.HasValue)
+                                        {
+                                            <span class="badge bg-label-info">@musteri.Yas yaş</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="text-muted">
+                                            @musteri.KayitTarihi.ToString("dd/MM/yyyy")
+                                        </span>
+                                        <br>
+                                        <small class="text-muted">
+                                            @musteri.KayitTarihi.ToString("HH:mm")
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button type="button" class="btn btn-sm btn-icon dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                                <i class="bx bx-dots-vertical-rounded"></i>
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item" href="@Url.Action("Detay", new { id = musteri.Id })">
+                                                    <i class="bx bx-show me-2"></i>Detay
+                                                </a>
+                                                <a class="dropdown-item" href="@Url.Action("Duzenle", new { id = musteri.Id })">
+                                                    <i class="bx bx-edit me-2"></i>Düzenle
+                                                </a>
+                                                <a class="dropdown-item telefon-ara-btn" href="#" 
+                                                   data-telefon="@musteri.TelefonNo" data-musteri-id="@musteri.Id">
+                                                    <i class="bx bx-phone me-2"></i>Ara
+                                                </a>
+                                                @if (!string.IsNullOrEmpty(musteri.Email))
+                                                {
+                                                    <a class="dropdown-item" href="mailto:@musteri.Email">
+                                                        <i class="bx bx-envelope me-2"></i>E-posta
+                                                    </a>
+                                                }
+                                                <div class="dropdown-divider"></div>
+                                                <button type="button" class="dropdown-item text-danger" 
+                                                        onclick="silModalAc(@musteri.Id, '@musteri.TamAd', '@musteri.TelefonNo')">
+                                                    <i class="bx bx-trash me-2"></i>Sil
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="card-body text-center py-5">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="bx bx-search bx-lg text-muted"></i>
+                            </div>
+                            <h5 class="empty-state-title">
+                                @if (!string.IsNullOrEmpty(ViewBag.Arama))
+                                {
+                                    <span>Arama sonucu bulunamadı</span>
+                                }
+                                else
+                                {
+                                    <span>Henüz müşteri kaydı yok</span>
+                                }
+                            </h5>
+                            <p class="empty-state-text text-muted">
+                                @if (!string.IsNullOrEmpty(ViewBag.Arama))
+                                {
+                                    <span>"@ViewBag.Arama" aramanız için sonuç bulunamadı. Farklı kelimeler deneyebilirsiniz.</span>
+                                }
+                                else
+                                {
+                                    <span>İlk müşteri kaydınızı oluşturmak için "Yeni Müşteri" butonuna tıklayın.</span>
+                                }
+                            </p>
+                            <div class="empty-state-action">
+                                @if (!string.IsNullOrEmpty(ViewBag.Arama))
+                                {
+                                    <a href="@Url.Action("Liste")" class="btn btn-outline-primary">
+                                        <i class="bx bx-list-ul me-1"></i>Tüm Müşteriler
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("YeniKayit")" class="btn btn-primary">
+                                        <i class="bx bx-user-plus me-1"></i>İlk Müşteriyi Ekle
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Silme Modal -->
+<div class="modal fade" id="silModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bx bx-trash me-1"></i>Müşteriyi Sil
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    <h6 class="alert-heading">Dikkat!</h6>
+                    <p class="mb-0">
+                        <strong id="silModalAd"></strong> adlı müşteriyi silmek istediğinizden emin misiniz?
+                        Bu işlem geri alınamaz.
+                    </p>
+                </div>
+                <p><strong>Telefon:</strong> <span id="silModalTelefon"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="bx bx-x me-1"></i>İptal
+                </button>
+                <form asp-action="Sil" method="post" class="d-inline" id="silForm">
+                    <input type="hidden" name="id" id="silModalId" />
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bx bx-trash me-1"></i>Evet, Sil
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Messages -->
+@if (TempData["Success"] != null)
+{
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050">
+        <div class="toast show" role="alert">
+            <div class="toast-header text-success">
+                <i class="bx bx-check-circle me-2"></i>
+                <strong class="me-auto">Başarılı</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body">
+                @TempData["Success"]
+            </div>
+        </div>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050">
+        <div class="toast show" role="alert">
+            <div class="toast-header text-danger">
+                <i class="bx bx-error-circle me-2"></i>
+                <strong class="me-auto">Hata</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body">
+                @TempData["Error"]
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        // Silme modal'ı aç
+        function silModalAc(id, ad, telefon) {
+            document.getElementById('silModalId').value = id;
+            document.getElementById('silModalAd').textContent = ad;
+            document.getElementById('silModalTelefon').textContent = telefon;
+            
+            var modal = new bootstrap.Modal(document.getElementById('silModal'));
+            modal.show();
+        }
+        
+        // Toast otomatik kapatma
+        setTimeout(function() {
+            $('.toast').fadeOut();
+        }, 5000);
+        
+        // Arama inputuna focus
+        document.addEventListener('DOMContentLoaded', function() {
+            const aramaInput = document.querySelector('input[name="arama"]');
+            if (aramaInput && !aramaInput.value) {
+                aramaInput.focus();
+            }
+        });
+    </script>
+}

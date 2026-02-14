@@ -1,0 +1,554 @@
+/* ============================================
+   ÇAĞRI YÖNETİMİ SİSTEMİ - CSS
+   ============================================ */
+
+/* Layout backdrop'unu devre dışı bırak */
+.content-backdrop {
+    display: none !important;
+    opacity: 0 !important;
+}
+
+.layout-overlay {
+    pointer-events: none !important;
+}
+
+/* Floating Button - Sabit Buton */
+.btn-floating {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 998; /* Z-index düşürüldü */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.btn-floating:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.btn-floating i {
+    font-size: 28px;
+}
+
+/* Side Panel - Yan Panel Temel Yapı */
+.side-panel {
+    position: fixed;
+    top: 0;
+    right: -400px !important; /* Başlangıçta mutlaka kapalı */
+    width: 400px;
+    height: 100vh;
+    background: #fff;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.08);
+    z-index: 999; /* Z-index düşürüldü */
+    transition: right 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    visibility: hidden; /* Başlangıçta gizli */
+    pointer-events: none; /* Kapalıyken tıklamaları engelleme */
+}
+
+/* Close Button - HEADER DIŞINDA, MUTLAK POZİSYON */
+.side-panel-close-btn {
+    position: absolute !important;
+    top: 15px;
+    right: 15px;
+    z-index: 9999 !important;
+    filter: brightness(0) invert(1);
+    opacity: 0.9;
+    cursor: pointer !important;
+    pointer-events: all !important;
+    background: rgba(0, 0, 0, 0.2) !important;
+    border-radius: 50% !important;
+    padding: 8px !important;
+    width: 36px !important;
+    height: 36px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.2s ease !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    user-select: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+    touch-action: manipulation !important;
+}
+
+.side-panel-close-btn:hover {
+    opacity: 1 !important;
+    background: rgba(255, 0, 0, 0.7) !important;
+    transform: rotate(90deg) scale(1.15) !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.side-panel-close-btn:active {
+    transform: rotate(90deg) scale(0.95) !important;
+    background: rgba(255, 0, 0, 0.9) !important;
+}
+
+/* Panel sürüklenirken close button'u koru */
+.side-panel.dragging .side-panel-close-btn {
+    pointer-events: all !important;
+    z-index: 99999 !important;
+}
+
+.side-panel.active {
+    right: 0 !important;
+    visibility: visible !important;
+    pointer-events: auto !important; /* Açıkken tıklanabilir */
+}
+
+/* Sürüklenirken stil */
+.side-panel.dragging {
+    transition: none;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    opacity: 0.98;
+}
+
+.side-panel.dragging .side-panel-header {
+    cursor: grabbing !important;
+}
+
+/* Geniş Panel (Şablonlar için) */
+.side-panel-wide {
+    width: 500px;
+    right: -500px !important;
+}
+
+.side-panel-wide.active {
+    right: 0; /* !important kaldırıldı, JavaScript ile dinamik ayarlama için */
+    visibility: visible !important;
+}
+
+/* Panel Header */
+.side-panel-header {
+    padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 12px;
+    position: relative;
+    pointer-events: auto; /* Header tıklanabilir */
+}
+
+/* Drag Handle - Sürükleme Tutamacı */
+.drag-handle {
+    cursor: move;
+    padding: 8px;
+    margin: -8px 0 -8px -8px;
+    color: rgba(255, 255, 255, 0.7);
+    transition: all 0.2s ease;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    user-select: none;
+    flex-shrink: 0;
+    width: 40px;
+    justify-content: center;
+    z-index: 1;
+    position: relative;
+}
+
+.drag-handle:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 1);
+    transform: scale(1.1);
+}
+
+.drag-handle:active {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(0.95);
+}
+
+.drag-handle i {
+    font-size: 20px;
+    pointer-events: none;
+}
+
+.side-panel-header h5 {
+    margin: 0;
+    color: white;
+    user-select: none;
+    flex: 1;
+}
+
+/* Panel Body */
+.side-panel-body {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* Scrollbar Styling */
+.side-panel-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.side-panel-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.side-panel-body::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+.side-panel-body::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Overlay (Arka Plan Karartma) - DEVRE DIŞI */
+.side-panel-overlay {
+    display: none !important; /* Overlay tamamen devre dışı */
+}
+
+/* Müşteri Bilgi Kartı */
+.musteri-bilgi-card {
+    border-left: 4px solid #28a745;
+    background: #f8f9fa;
+}
+
+.musteri-bilgi-card.gecici {
+    border-left-color: #ffc107;
+}
+
+.musteri-bilgi-card.yeni {
+    border-left-color: #17a2b8;
+}
+
+/* Kategori Butonları */
+.kategori-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+}
+
+.kategori-btn:hover {
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-color: #667eea;
+}
+
+.kategori-btn-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: white;
+    margin-right: 12px;
+}
+
+.kategori-btn-content {
+    flex: 1;
+}
+
+.kategori-btn-title {
+    font-weight: 600;
+    margin-bottom: 2px;
+    color: #333;
+}
+
+.kategori-btn-desc {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 0;
+}
+
+.kategori-btn-badge {
+    background: #e9ecef;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #495057;
+}
+
+/* Şablon Kartları */
+.sablon-card {
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.sablon-card:hover {
+    border-color: #667eea;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+}
+
+.sablon-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 8px;
+}
+
+.sablon-card-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #333;
+    margin: 0;
+}
+
+.sablon-card-shortcut {
+    background: #667eea;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-family: monospace;
+}
+
+.sablon-card-content {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.sablon-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: #999;
+}
+
+.sablon-card-usage {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Popüler Şablon Badge */
+.populer-sablon-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+}
+
+/* Timer Display */
+#cagriSuresi {
+    font-size: 1.5rem;
+    font-family: 'Courier New', monospace;
+    color: #28a745;
+}
+
+/* Alert Animations */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert-animate {
+    animation: slideIn 0.3s ease;
+}
+
+/* Loading Spinner */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+/* Responsive Tasarım */
+@media (max-width: 768px) {
+    .side-panel,
+    .side-panel-wide {
+        width: 100%;
+        right: -100% !important;
+    }
+    
+    .side-panel.active,
+    .side-panel-wide.active {
+        right: 0 !important;
+        visibility: visible !important;
+    }
+    
+    .btn-floating {
+        width: 50px;
+        height: 50px;
+        bottom: 20px;
+        right: 20px;
+    }
+    
+    .btn-floating i {
+        font-size: 24px;
+    }
+}
+
+/* Smooth Transitions */
+* {
+    transition: none;
+}
+
+.side-panel,
+.side-panel-overlay,
+.btn-floating,
+.kategori-btn,
+.sablon-card {
+    transition: all 0.3s ease;
+}
+
+/* Tooltip Style */
+[data-bs-toggle="tooltip"] {
+    cursor: help;
+}
+
+/* Badge Renkleri */
+.badge-kayitli {
+    background-color: #28a745 !important;
+}
+
+.badge-kismi {
+    background-color: #ffc107 !important;
+}
+
+.badge-gecici {
+    background-color: #6c757d !important;
+}
+
+/* Kart Gölgeleri */
+.card-hover {
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.card-hover:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+}
+
+.empty-state i {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+/* Button Loading State */
+.btn-loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.btn-loading::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin-left: -8px;
+    margin-top: -8px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spinner 0.6s linear infinite;
+}
+
+@keyframes spinner {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Form Validasyon Stilleri */
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+.invalid-feedback {
+    display: block;
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+/* Kopyalama Bildirimi */
+.copy-notification {
+    position: fixed;
+    bottom: 100px;
+    right: 30px;
+    background: #28a745;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 2000;
+    animation: slideInUp 0.3s ease, slideOutDown 0.3s ease 2.7s;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideOutDown {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+}
+
+

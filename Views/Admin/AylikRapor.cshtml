@@ -1,0 +1,267 @@
+@{
+    ViewData["Title"] = "Aylık Rapor";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title">📊 Aylık Rapor</h3>
+                    <button type="button" class="btn btn-success" onclick="exportToExcel()">
+                        <i class="fas fa-file-excel"></i> Excel'e Aktar
+                    </button>
+                </div>
+                <div class="card-body">
+                    <!-- Filtre Bölümü -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <label for="yil" class="form-label">Yıl</label>
+                            <select class="form-select" id="yil" name="yil">
+                                @for (int i = DateTime.Now.Year; i >= DateTime.Now.Year - 5; i--)
+                                {
+                                    <option value="@i" selected="@(i == (ViewBag.SecilenYil ?? DateTime.Now.Year))">@i</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="ay" class="form-label">Ay</label>
+                            <select class="form-select" id="ay" name="ay">
+                                <option value="1" selected="@(1 == (ViewBag.SecilenAy ?? DateTime.Now.Month))">Ocak</option>
+                                <option value="2" selected="@(2 == (ViewBag.SecilenAy ?? DateTime.Now.Month))">Şubat</option>
+                                <option value="3" selected="@(3 == (ViewBag.SecilenAy ?? DateTime.Now.Month))">Mart</option>
+                                <option value="4" selected="@(4 == (ViewBag.SecilenAy ?? DateTime.Now.Month))">Nisan</option>
+                                <option value="5" selected="@(5 == (ViewBag.SecilenAy ?? DateTime.Now.Month))">Mayıs</option>
+                                <option value="6" selected="@(6 == (ViewBag.SecilenAy ?? DateTime.Now.Month))">Haziran</option>
+                                <option value="7" selected="@(7 == (ViewBag.SecilenAy ?? DateTime.Now.Month))">Temmuz</option>
+                                <option value="8" selected="@(8 == (ViewBag.SecilenAy ?? DateTime.Now.Month))">Ağustos</option>
+                                <option value="9" selected="@(9 == (ViewBag.SecilenAy ?? DateTime.Now.Month))">Eylül</option>
+                                <option value="10" selected="@(10 == (ViewBag.SecilenAy ?? DateTime.Now.Month))">Ekim</option>
+                                <option value="11" selected="@(11 == (ViewBag.SecilenAy ?? DateTime.Now.Month))">Kasım</option>
+                                <option value="12" selected="@(12 == (ViewBag.SecilenAy ?? DateTime.Now.Month))">Aralık</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button type="button" class="btn btn-primary" onclick="filtrele()">
+                                <i class="fas fa-search"></i> Filtrele
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Özet İstatistikler -->
+                    <div class="row mb-4">
+                        <div class="col-lg-3 col-md-6">
+                            <div class="card bg-primary text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h4 class="mb-0">@ViewBag.ToplamAktivite</h4>
+                                            <small>Toplam Aktivite</small>
+                                        </div>
+                                        <div class="align-self-center">
+                                            <i class="fas fa-tasks fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="card bg-success text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h4 class="mb-0">@ViewBag.CozulenAktivite</h4>
+                                            <small>Çözülen Aktivite</small>
+                                        </div>
+                                        <div class="align-self-center">
+                                            <i class="fas fa-check-circle fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="card bg-warning text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h4 class="mb-0">@ViewBag.BekleyenAktivite</h4>
+                                            <small>Bekleyen Aktivite</small>
+                                        </div>
+                                        <div class="align-self-center">
+                                            <i class="fas fa-clock fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="card bg-info text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <h4 class="mb-0">@(ViewBag.ToplamAktivite > 0 ? Math.Round((double)ViewBag.CozulenAktivite / ViewBag.ToplamAktivite * 100, 1) : 0)%</h4>
+                                            <small>Çözüm Oranı</small>
+                                        </div>
+                                        <div class="align-self-center">
+                                            <i class="fas fa-percentage fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Operatör Performans Tablosu -->
+                    <div class="row">
+                        <div class="col-12">
+                            <h5>Operatör Performans Raporu</h5>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Operatör</th>
+                                            <th>Toplam Aktivite</th>
+                                            <th>Çözülen</th>
+                                            <th>Beklemede</th>
+                                            <th>İptal Edilen</th>
+                                            <th>Çözüm Oranı</th>
+                                            <th>Ort. Çağrı Süresi</th>
+                                            <th>Müşteri Memnuniyet</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (ViewBag.OperatorPerformans != null)
+                                        {
+                                            @foreach (var item in ViewBag.OperatorPerformans)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <strong>@item.OperatorAdi</strong>
+                                                        <br><small class="text-muted">@item.OperatorEmail</small>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-primary">@item.ToplamAktivite</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-success">@item.CozulenAktivite</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-warning">@item.BekleyenAktivite</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-danger">@item.IptalEdilenAktivite</span>
+                                                    </td>
+                                                    <td>
+                                                        @{
+                                                            var cozumOrani = item.ToplamAktivite > 0 ? (double)item.CozulenAktivite / item.ToplamAktivite * 100 : 0;
+                                                            var renk = cozumOrani >= 80 ? "success" : (cozumOrani >= 60 ? "warning" : "danger");
+                                                        }
+                                                        <span class="badge bg-@renk">@Math.Round(cozumOrani, 1)%</span>
+                                                    </td>
+                                                    <td>
+                                                        @if (item.OrtalamaCagriSuresi > 0)
+                                                        {
+                                                            <span>@Math.Round(item.OrtalamaCagriSuresi, 1) dk</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-muted">-</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @if (item.MusteriMemnuniyetPuani > 0)
+                                                        {
+                                                            var memnuniyetRenk = item.MusteriMemnuniyetPuani >= 4 ? "success" : (item.MusteriMemnuniyetPuani >= 3 ? "warning" : "danger");
+                                                            <span class="badge bg-@memnuniyetRenk">@Math.Round(item.MusteriMemnuniyetPuani, 1)/5</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-muted">-</span>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="8" class="text-center text-muted">Veri bulunamadı</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Günlük Aktivite Dağılımı -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5>Günlük Aktivite Dağılımı</h5>
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Gün</th>
+                                            @for (int gun = 1; gun <= DateTime.DaysInMonth(ViewBag.SecilenYil ?? DateTime.Now.Year, ViewBag.SecilenAy ?? DateTime.Now.Month); gun++)
+                                            {
+                                                <th class="text-center">@gun</th>
+                                            }
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>Aktivite Sayısı</strong></td>
+                                            @if (ViewBag.GunlukAktivite != null)
+                                            {
+                                                @for (int gun = 1; gun <= DateTime.DaysInMonth(ViewBag.SecilenYil ?? DateTime.Now.Year, ViewBag.SecilenAy ?? DateTime.Now.Month); gun++)
+                                                {
+                                                    var aktiviteSayisi = ViewBag.GunlukAktivite.ContainsKey(gun) ? ViewBag.GunlukAktivite[gun] : 0;
+                                                    var renk = aktiviteSayisi >= 10 ? "success" : (aktiviteSayisi >= 5 ? "warning" : "light");
+                                                    <td class="text-center">
+                                                        <span class="badge bg-@renk">@aktiviteSayisi</span>
+                                                    </td>
+                                                }
+                                            }
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function filtrele() {
+        const yil = document.getElementById('yil').value;
+        const ay = document.getElementById('ay').value;
+        window.location.href = '@Url.Action("AylikRapor", "Admin")?yil=' + yil + '&ay=' + ay;
+    }
+
+    function exportToExcel() {
+        const yil = document.getElementById('yil').value;
+        const ay = document.getElementById('ay').value;
+        window.location.href = '@Url.Action("ExportAylikRapor", "Admin")?yil=' + yil + '&ay=' + ay;
+    }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

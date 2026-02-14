@@ -1,0 +1,238 @@
+@{
+    ViewData["Title"] = "Canlı Operatör Durumu";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">
+                    <i class="bx bx-radio-circle-marked me-2 text-success"></i>Canlı Operatör Durumu
+                </h4>
+                <div>
+                    <span class="badge bg-label-secondary me-2">
+                        <i class="bx bx-time me-1"></i>
+                        <span id="sonGuncelleme">--:--:--</span>
+                    </span>
+                    <button type="button" class="btn btn-sm btn-primary" id="btnYenile">
+                        <i class="bx bx-refresh me-1"></i>Yenile
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Durum Özet Kartları -->
+<div class="row" id="durumOzetKartlari">
+    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="bx bx-user bx-lg mb-2 text-primary"></i>
+                <h3 class="mb-1" id="toplamOperator">-</h3>
+                <p class="mb-0 text-muted">Toplam Operatör</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
+        <div class="card border-success">
+            <div class="card-body text-center">
+                <i class="bx bx-check-circle bx-lg mb-2 text-success"></i>
+                <h3 class="mb-1 text-success" id="musaitSayisi">-</h3>
+                <p class="mb-0 text-muted">Müsait</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
+        <div class="card border-danger">
+            <div class="card-body text-center">
+                <i class="bx bx-phone bx-lg mb-2 text-danger"></i>
+                <h3 class="mb-1 text-danger" id="cagrıdaSayisi">-</h3>
+                <p class="mb-0 text-muted">Çağrıda</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
+        <div class="card border-warning">
+            <div class="card-body text-center">
+                <i class="bx bx-pen bx-lg mb-2 text-warning"></i>
+                <h3 class="mb-1 text-warning" id="araCalismaSayisi">-</h3>
+                <p class="mb-0 text-muted">Ara Çalışma</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
+        <div class="card border-info">
+            <div class="card-body text-center">
+                <i class="bx bx-coffee bx-lg mb-2 text-info"></i>
+                <h3 class="mb-1 text-info" id="molaSayisi">-</h3>
+                <p class="mb-0 text-muted">Mola</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 mb-4">
+        <div class="card border-secondary">
+            <div class="card-body text-center">
+                <i class="bx bx-group bx-lg mb-2 text-secondary"></i>
+                <h3 class="mb-1 text-secondary" id="digerSayisi">-</h3>
+                <p class="mb-0 text-muted">Diğer</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Uyarılar -->
+<div class="row mb-4" id="uyarilarContainer" style="display: none;">
+    <div class="col-12">
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <h5 class="alert-heading">
+                <i class="bx bx-error me-2"></i>Dikkat Gereken Durumlar
+            </h5>
+            <div id="uyarilarListesi"></div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+</div>
+
+<!-- Operatör Kartları -->
+<div class="row" id="operatorKartlari">
+    <div class="col-12 text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Yükleniyor...</span>
+        </div>
+        <p class="mt-2 text-muted">Operatörler yükleniyor...</p>
+    </div>
+</div>
+
+<!-- Operatör Detay Modal -->
+<div class="modal fade" id="operatorDetayModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="operatorDetayBaslik">
+                    <i class="bx bx-user me-2"></i>Operatör Detayı
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>Mevcut Durum:</strong>
+                        <span class="badge ms-2" id="detayMevcutDurum"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Durumda Geçen Süre:</strong>
+                        <span id="detayDurumSuresi" class="ms-2">-</span>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <strong>Not:</strong>
+                    <p class="text-muted mb-0" id="detayDurumNotu">-</p>
+                </div>
+                
+                <hr>
+                
+                <h6>Bugünkü Durum Geçmişi</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Saat</th>
+                                <th>Önceki</th>
+                                <th>Yeni</th>
+                                <th>Süre</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detayDurumGecmisi">
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">Yükleniyor...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <hr>
+                
+                <h6>Durum Değiştir (Süpervizör)</h6>
+                <div class="row g-2">
+                    <div class="col-md-8">
+                        <select class="form-select" id="yeniDurumSecim">
+                            <option value="Musait">Müsait</option>
+                            <option value="Mola">Mola</option>
+                            <option value="OgleYemegi">Öğle Yemeği</option>
+                            <option value="Toplantida">Toplantıda</option>
+                            <option value="Egitimde">Eğitimde</option>
+                            <option value="Uzakta">Uzakta</option>
+                            <option value="Mesgul">Meşgul</option>
+                            <option value="Offline">Offline</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="button" class="btn btn-warning w-100" id="btnDurumDegistir">
+                            <i class="bx bx-edit me-1"></i>Değiştir
+                        </button>
+                    </div>
+                </div>
+                <input type="hidden" id="detayOperatorId">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin-canli-durum.js"></script>
+}
+
+@section Styles {
+    <style>
+        .operator-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .operator-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .operator-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1rem;
+        }
+        
+        .operator-card.warning {
+            border: 2px solid #ffc107 !important;
+            animation: warningPulse 2s infinite;
+        }
+        
+        @@keyframes warningPulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+            }
+        }
+        
+        .status-badge {
+            font-size: 0.95rem;
+            padding: 0.5rem 1rem;
+        }
+    </style>
+}
+

@@ -1,0 +1,153 @@
+@model CagriMerkeziUyg.Models.Operator
+@{
+    ViewData["Title"] = "Operatör Düzenle";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bx bx-edit me-2"></i>Operatör Düzenle
+                </h5>
+                <a href="@Url.Action("Operatorler", "Admin")" class="btn btn-secondary">
+                    <i class="bx bx-arrow-back me-1"></i>Geri Dön
+                </a>
+            </div>
+            
+            <div class="card-body">
+                <form asp-action="OperatorDetayEkle" method="post">
+                    <input asp-for="Id" type="hidden" />
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Ad" class="form-label"></label>
+                                <input asp-for="Ad" class="form-control" placeholder="Operatör adı" />
+                                <span asp-validation-for="Ad" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Soyad" class="form-label"></label>
+                                <input asp-for="Soyad" class="form-control" placeholder="Operatör soyadı" />
+                                <span asp-validation-for="Soyad" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="KullaniciAdi" class="form-label"></label>
+                                <input asp-for="KullaniciAdi" class="form-control" placeholder="Sistem kullanıcı adı" readonly />
+                                <small class="form-text text-muted">Kullanıcı adı değiştirilemez</small>
+                                <span asp-validation-for="KullaniciAdi" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Email" class="form-label"></label>
+                                <input asp-for="Email" type="email" class="form-control" placeholder="email@domain.com" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Telefon" class="form-label"></label>
+                                <input asp-for="Telefon" class="form-control" placeholder="05XX XXX XX XX" />
+                                <span asp-validation-for="Telefon" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Sifre" class="form-label"></label>
+                                <input asp-for="Sifre" type="password" class="form-control" />
+                                <span asp-validation-for="Sifre" class="text-danger"></span>
+                                <small class="form-text text-muted">Şifreyi değiştirmek için yeni şifre girin</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="Rol" class="form-label"></label>
+                                <select asp-for="Rol" class="form-select" asp-items="Html.GetEnumSelectList<CagriMerkeziUyg.Models.OperatorRolu>()">
+                                    <option value="">Rol seçiniz</option>
+                                </select>
+                                <span asp-validation-for="Rol" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <!-- Boş alan -->
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="CalismaSaatiBaslangic" class="form-label"></label>
+                                <input asp-for="CalismaSaatiBaslangic" type="time" class="form-control" />
+                                <span asp-validation-for="CalismaSaatiBaslangic" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="CalismaSaatiBitis" class="form-label"></label>
+                                <input asp-for="CalismaSaatiBitis" type="time" class="form-control" />
+                                <span asp-validation-for="CalismaSaatiBitis" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-check mb-3">
+                                <input asp-for="Aktif" class="form-check-input" type="checkbox" />
+                                <label asp-for="Aktif" class="form-check-label">
+                                    Operatör aktif durumda
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Son Giriş</label>
+                                <input type="text" class="form-control" value="@(Model.SonGiris?.ToString("dd.MM.yyyy HH:mm") ?? "Henüz giriş yapmadı")" readonly />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Kayıt Tarihi</label>
+                                <input type="text" class="form-control" value="@Model.KayitTarihi.ToString("dd.MM.yyyy HH:mm")" readonly />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Çalışma Saati</label>
+                                <input type="text" class="form-control" value="@((Model.CalismaSaatiBitis - Model.CalismaSaatiBaslangic)?.TotalHours.ToString("0") ?? "0") saat" readonly />
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end">
+                        <a href="@Url.Action("Operatorler", "Admin")" class="btn btn-secondary me-2">İptal</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bx bx-save me-1"></i>Güncelle
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}
