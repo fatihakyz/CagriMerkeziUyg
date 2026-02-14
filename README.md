@@ -2,47 +2,14 @@
 
 Modern ve kapsamlı bir çağrı merkezi yönetim sistemi. ASP.NET Core MVC ile geliştirilmiş, operatör yönetimi, müşteri takibi, randevu sistemi ve performans raporlama özellikleri içerir.
 
-## ✨ Özellikler
+## ✨ Temel Özellikler
 
-### 👥 Kullanıcı Yönetimi
-- **Rol Tabanlı Yetkilendirme**: Admin, Süpervizör ve Operatör rolleri
-- **Operatör Durum Yönetimi**: Müsait, Çağrıda, Mola, Toplantıda vb. durumlar
-- **Çalışma Saati Takibi**: Günlük giriş/çıkış saatleri ve süre hesaplamaları
-- **Canlı Operatör Durumu**: Tüm operatörlerin anlık durumlarını görüntüleme
-
-### 👤 Müşteri Yönetimi
-- **Detaylı Müşteri Profilleri**: Ad, soyad, telefon, email, adres ve notlar
-- **Hızlı Kayıt Sistemi**: Arama sırasında hızlı müşteri kaydı
-- **Müşteri Etiketleme**: VIP, Potansiyel, Şikayetçi gibi özel etiketler
-- **Aktivite Geçmişi**: Tüm müşteri etkileşimlerinin detaylı kaydı
-- **Arama Geçmişi**: Gelen/giden aramalar ve arama detayları
-
-### 📞 Arama Yönetimi
-- **Çağrı Kaydı**: Detaylı çağrı notları ve süre takibi
-- **Arama Tipi**: Gelen/Giden arama ayrımı
-- **Telefon Entegrasyonu**: Otomatik müşteri tanıma
-- **Cevap Şablonları**: Sık kullanılan yanıtlar için hazır şablonlar
-- **Şablon Kategorileri**: Organize edilmiş şablon sistemi
-
-### 📅 Randevu Sistemi
-- **Randevu Oluşturma**: Müşteriler için randevu planlama
-- **Randevu Takibi**: Bekleyen, tamamlanan, iptal edilen randevular
-- **Günlük Randevu Listesi**: Bugünün randevularını görüntüleme
-- **Randevu Bildirimleri**: Yaklaşan randevular için hatırlatıcılar
-
-### 📊 Raporlama ve Analiz
-- **Operatör Performansı**: Günlük, haftalık, aylık performans raporları
-- **Arama İstatistikleri**: Toplam arama sayısı, ortalama süre, başarı oranı
-- **Günlük Raporlar**: Detaylı günlük aktivite raporları
-- **Aylık Raporlar**: Kapsamlı aylık performans analizleri
-- **Excel Export**: Raporları Excel formatında dışa aktarma
-
-### 🎨 Kullanıcı Arayüzü
-- Modern ve responsive tasarım
-- Bootstrap 5 tabanlı arayüz
-- Font Awesome ikonları
-- Kullanıcı dostu dashboard
-- Mobil uyumlu tasarım
+- **👥 Kullanıcı Yönetimi**: Rol tabanlı yetkilendirme (Admin, Süpervizör, Operatör), operatör durum yönetimi ve canlı durum takibi
+- **👤 Müşteri Yönetimi**: Detaylı müşteri profilleri, etiketleme sistemi, aktivite ve arama geçmişi
+- **📞 Arama Yönetimi**: Çağrı kaydı, gelen/giden arama takibi, cevap şablonları
+- **📅 Randevu Sistemi**: Randevu planlama, takip ve hatırlatıcılar
+- **📊 Raporlama**: Operatör performans raporları, arama istatistikleri, Excel export
+- **🎨 Modern Arayüz**: Responsive tasarım, Bootstrap 5, mobil uyumlu
 
 ## 🛠️ Teknolojiler
 
@@ -63,129 +30,52 @@ Modern ve kapsamlı bir çağrı merkezi yönetim sistemi. ASP.NET Core MVC ile 
 
 ## 🚀 Kurulum
 
-### 1. Projeyi Klonlayın
-
 ```bash
-git clone https://github.com/[kullanici-adi]/CagriMerkeziUyg.git
+# 1. Projeyi klonlayın
+git clone https://github.com/fatihakyz/CagriMerkeziUyg.git
 cd CagriMerkeziUyg
-```
 
-### 2. Veritabanı Bağlantısını Yapılandırın
+# 2. appsettings.json dosyasını oluşturun (appsettings.example.json'dan)
+# Connection string'inizi yapılandırın
 
-`appsettings.json` dosyasını oluşturun (örnek dosyadan kopyalayın):
-
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=CagriMerkeziDB;Trusted_Connection=True;MultipleActiveResultSets=true"
-  },
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
-  },
-  "AllowedHosts": "*"
-}
-```
-
-### 3. Veritabanını Oluşturun
-
-```bash
+# 3. Veritabanını oluşturun
 dotnet ef database update
-```
 
-### 4. Uygulamayı Çalıştırın
-
-```bash
+# 4. Uygulamayı çalıştırın
 dotnet run
 ```
 
-Uygulama `https://localhost:5001` adresinde çalışmaya başlayacaktır.
+Uygulama `https://localhost:5001` adresinde çalışacaktır.
 
-## 👤 Varsayılan Kullanıcılar
+## 👤 Demo Kullanıcılar
 
-Uygulama ilk çalıştırmada otomatik olarak demo kullanıcılar oluşturur:
-
-### Admin Hesabı
-- **Kullanıcı Adı**: `admin`
-- **Şifre**: `admin123`
-- **Rol**: Admin
-
-### Süpervizör Hesabı
-- **Kullanıcı Adı**: `supervisor`
-- **Şifre**: `123456`
-- **Rol**: Supervisor
-
-### Operatör Hesabı
-- **Kullanıcı Adı**: `operator1`
-- **Şifre**: `123456`
-- **Rol**: Operator
+| Rol | Kullanıcı Adı | Şifre |
+|-----|---------------|-------|
+| Admin | `admin` | `admin123` |
+| Süpervizör | `supervisor` | `123456` |
+| Operatör | `operator1` | `123456` |
 
 ## 📁 Proje Yapısı
 
 ```
 CagriMerkeziUyg/
-├── Controllers/          # MVC Controller'ları
-│   ├── AuthController.cs
-│   ├── OperatorController.cs
-│   ├── MusteriController.cs
-│   ├── AdminController.cs
-│   └── ...
-├── Models/              # Veri modelleri
-│   ├── Operator.cs
-│   ├── Musteri.cs
-│   ├── Randevu.cs
-│   └── ...
-├── Views/               # Razor view'ları
-│   ├── Operator/
-│   ├── Musteri/
-│   ├── Admin/
-│   └── ...
-├── Data/                # DbContext ve veritabanı yapılandırması
-│   └── CagriMerkeziDbContext.cs
-├── Services/            # İş mantığı servisleri
-│   ├── SimpleExcelExportService.cs
-│   └── OperatorDurumService.cs
-├── Migrations/          # EF Core migration dosyaları
-└── wwwroot/            # Statik dosyalar (CSS, JS, images)
+├── Controllers/     # MVC Controller'ları
+├── Models/         # Veri modelleri
+├── Views/          # Razor view'ları
+├── Data/           # DbContext
+├── Services/       # İş mantığı servisleri
+├── Migrations/     # EF Core migrations
+└── wwwroot/        # Statik dosyalar
 ```
 
-## 🔐 Güvenlik
+## 📝 Geliştirme Fikirleri
 
-- Şifrelerin güvenli bir şekilde hash'lenmesi önerilir (BCrypt, PBKDF2)
-- Production ortamında güçlü şifreler kullanın
-- `appsettings.json` dosyasını asla Git'e commit etmeyin
-- HTTPS kullanımı önerilir
-- Cookie ayarları güvenlik için optimize edilmiştir
-
-## 🤝 Katkıda Bulunma
-
-1. Bu repo'yu fork edin
-2. Feature branch'i oluşturun (`git checkout -b feature/YeniOzellik`)
-3. Değişikliklerinizi commit edin (`git commit -m 'Yeni özellik eklendi'`)
-4. Branch'inizi push edin (`git push origin feature/YeniOzellik`)
-5. Pull Request oluşturun
-
-## 📝 Yapılacaklar
-
-- [ ] Gerçek zamanlı bildirim sistemi (SignalR)
-- [ ] SMS/Email entegrasyonu
-- [ ] Müşteri memnuniyet anketi
-- [ ] Dark mode desteği
-- [ ] Gelişmiş filtreleme ve arama
-- [ ] PDF rapor oluşturma
-- [ ] API endpoint'leri
-- [ ] Mobile uygulama desteği
+- Gerçek zamanlı bildirim sistemi (SignalR)
+- SMS/Email entegrasyonu
+- Dark mode desteği
+- PDF rapor oluşturma
+- API endpoint'leri
 
 ## 📄 Lisans
 
-Bu proje açık kaynak kodludur ve [MIT lisansı](LICENSE) altında dağıtılmaktadır.
-
-## 📧 İletişim
-
-Sorularınız için issue açabilir veya pull request gönderebilirsiniz.
-
-## 🙏 Teşekkürler
-
-Bu projeyi kullandığınız için teşekkür ederiz! Yıldız ⭐ vermeyi unutmayın!
+Bu proje [MIT lisansı](LICENSE) altında dağıtılmaktadır.
