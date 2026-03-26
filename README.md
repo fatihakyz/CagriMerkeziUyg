@@ -67,15 +67,3 @@ CagriMerkeziUyg/
 ├── Migrations/     # EF Core migrations
 └── wwwroot/        # Statik dosyalar
 ```
-
-## 📝 Geliştirme Fikirleri
-
-- Gerçek zamanlı bildirim sistemi (SignalR)
-- SMS/Email entegrasyonu
-- Dark mode desteği
-- PDF rapor oluşturma
-- API endpoint'leri
-
-## 📄 Lisans
-
-Bu proje [MIT lisansı](LICENSE) altında dağıtılmaktadır.
